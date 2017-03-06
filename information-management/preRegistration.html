@@ -1,0 +1,108 @@
+<html>
+<head>
+    <link href="css/bootstrap.css" rel="stylesheet" />
+    <link href="css/admin.css" rel="stylesheet" type="text/css" />
+
+    <script src="js/jquery-1.9.1.min.js" type="text/javascript"></script>
+    <script src="js/jquery.js" type="text/javascript"></script>
+    <script src="js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="js/bootstrap.js" type="text/javascript"></script>
+</head>
+
+
+<body class="" style="background: #00008b !important; background: -webkit-linear-gradient(top, #00008b 10%, blue 20%, #ffffff 50%);" >
+<nav class=" page-header text-center" style="margin-top: 0; background: #8b0000;">
+    <div class="container text-center">
+        <div class="text-center">
+            <h3 class="text-center" style="color: #ffffff;">ACLC Enrollment System</h3>
+        </div>
+    </div>
+</nav>
+
+<div class=" container container-fluid">
+    <div class="panel panel-info" style="/*box-shadow: 1px 1px 20px 4px #8b0000;">
+        <div class="panel-heading ">
+            <h4 class="panel-title text-center contain" >Pre-registration of Courses</h4>
+        </div>
+        <div class="panel-body">
+            <h4 class="alert alert-info">Courses you are allowed to pre-register:</h4>
+            <table class="table table-responsive table-hover">
+                <tr>
+                    <th>Action</th>
+                    <th>Course Code</th>
+                    <th>Description</th>
+                    <th>Units</th>
+                    <th>Pre/Co-requisites</th>
+                </tr>
+                <tr>
+                    <td><input type="checkbox"/></td>
+                    <td>GE113A</td>
+                    <td>Speech Communication 1</td>
+                    <td>3</td>
+                    <td>GE112B(pre)</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox"/></td>
+                    <td>HC104A</td>
+                    <td>Foreign Language 1</td>
+                    <td>3</td>
+                    <td>(none)</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox"/></td>
+                    <td>HC102B</td>
+                    <td>Tourism Planning and Development</td>
+                    <td>4</td>
+                    <td>HC301B(pre)</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox"/></td>
+                    <td>HR101A</td>
+                    <td>Housekeeping Management</td>
+                    <td>4</td>
+                    <td>HC301B(pre)</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox"/></td>
+                    <td>HE101A</td>
+                    <td>Front Office Management</td>
+                    <td>4</td>
+                    <td>HC301B</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox"/></td>
+                    <td>HE105B</td>
+                    <td>Hospitality and Tourism Laws</td>
+                    <td>3</td>
+                    <td>BE501B(pre)</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox"/></td>
+                    <td>GE523A</td>
+                    <td>Physical Education 3</td>
+                    <td>2</td>
+                    <td>GE522B</td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox"/></td>
+                    <td>HC204B</td>
+                    <td>Hygiene, Sanitation and Environment</td>
+                    <td>3</td>
+                    <td>(none)</td>
+                </tr>
+                <tr>
+                    <th>Total Units:</th>
+                    <td colspan="2"><input type="text" class="input input-lg" value="0" readonly/></td>
+                    <th>Total Allowable Units to Enroll:</th>
+                    <td><input type="text" class="input input-lg" value="23" readonly/></td>
+                </tr>
+            </table>
+            <div class="text-center">
+                <button class="btn btn-info alert" style="width: 400px">SUBMIT</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

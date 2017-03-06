@@ -1,0 +1,45 @@
+#left-div{
+
+    border: 2px solid #000000;
+    border-radius: 10px;
+    width: 450px;
+    height: 500px;
+    background-color: #ffffff;
+    margin-top: 70px;
+    margin-left: 40px;
+    padding: 30px;
+    position: absolute;
+
+}
+p{
+    font-size: 12px;
+
+}
+
+table{
+    margin-top: 30px;
+    margin-left: 30px;
+  }
+
+td{
+    font-size: 12px;
+    padding: 5px;
+
+
+}
+
+.button{
+
+    font-size: 14px;
+    margin-top: 20px;
+    width: 300px;
+    height: 50px;
+    color: #ffffff;
+    background: #2E3191;
+}
+select{
+    width: 170px;
+}
+input{
+    width: 170px;
+}

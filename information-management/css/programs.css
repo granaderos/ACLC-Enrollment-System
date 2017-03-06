@@ -1,0 +1,17 @@
+
+#divProgramsSubMenu a {
+    cursor: pointer !important;
+}
+
+#tblProgramSetting tr td {
+    padding-bottom: 5px;
+    font-size: 15px;
+}
+
+#tblForCourseEncoding tr td {
+    font-size: 12px;
+}
+
+#divAddProgramContent {
+    display: none !important;
+}

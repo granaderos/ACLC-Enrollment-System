@@ -1,0 +1,48 @@
+#navDiv {
+    top: 20px;
+    margin-left: 20px;
+    border: 2px solid #000000;
+    border-radius: 10px;
+    height: 500px;
+    width: 220px;
+    position: fixed;
+}
+
+#navDiv ul {
+    background-color: #2E3191;
+    width: inherit;
+
+}
+
+#navDiv li{
+    list-style-type: none;
+    border: 1px solid #000000;
+    width: inherit;
+    padding: 10px;
+    margin-left: -40px;
+    text-align: center;
+    background-color: #2E3191;
+}
+
+#navDiv a{
+    text-decoration: none;
+    color: #ffffff;
+}
+
+#navDiv li:hover{
+    background-color: #ffffff;
+    color: #2E3191;
+
+}
+
+#navDiv #info{
+    background-color: #ffffff;
+    border-radius: 10px;
+    height: 78px;
+}
+
+#navDiv #nav{
+    background-color: #2E3191 !important;
+    height: 284px;
+    border-radius: 8px;
+}

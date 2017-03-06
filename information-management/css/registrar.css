@@ -1,0 +1,13 @@
+#divRegistrarMainContainer{
+
+}
+.container{
+    width: 800px;
+    margin-left: -15px;
+}
+
+.panel-heading {
+    color: #ffffff;
+    background-color: #2E3191 !important;
+    border-color: #000000;
+}

@@ -1,0 +1,49 @@
+#adminMainContainer{
+
+    margin-left: 300px;
+    margin-top: 130px;
+    width: 700px;
+    height: 400px;
+    border: 2px solid #000000;
+    border-radius: 10px;
+    background: #2E3191;
+    position: absolute;
+
+
+}
+
+.field{
+
+    width: 300px;
+}
+.button{
+
+    border: 1px solid #000000;
+    border-radius: 20px;
+    font-size: 14px;
+    margin-top: 20px;
+    width: 300px;
+    height: 50px;
+    color: #ffffff;
+    background: #2E3191;
+    margin-top: 50px;
+    margin-bottom: 50px;
+
+
+}
+
+tr{
+    height: 50px;
+}
+form{
+    border: 2px solid #000000;
+    border-radius: 10px;
+    width: 500px;
+    background-color: #ffffff;
+    height: 400px;
+}
+#instruction{
+    font-size: 18px;
+
+    color: #ffffff;
+}

@@ -1,0 +1,354 @@
+    <div id="divAddCourses">
+    <h4 class="alert alert-info" id="h4NewPrograms"></h4>
+    <table id="tblProgramSetting">
+        <tr>
+            <td>
+                <label>Curriculum:</label>
+            </td>
+            <td>
+                <select class="input input-sm" id="selCurYear"></select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>Courses Division for: </label>
+            </td>
+            <td>
+                <select class="input input-sm" onchange="changeCoursesDivision()" id="selSOrT">
+                    <option>--choose--</option>
+                    <option>Semester</option>
+                    <option>Trimester</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>No. of Years:</label>
+            </td>
+            <td>
+                <select class="input input-sm" onchange="changeNoOfYears()" id="selNoOfYears">
+                    <option>4</option>
+                    <option>3</option>
+                    <option>2</option>
+                </select>
+            </td>
+        </tr>
+    </table>
+    <table id="tblForCourseEncoding" class="table table-responsive">
+    <!-- 1st Year -->
+    <tr>
+        <th class="text-center alert-info" colspan="4" id="thFor1stWhat">1st Year | 1st <span class="spanCur"></span></th>
+    </tr>
+    <tr class="alert-danger">
+        <th>Course Code</th>
+        <th>Description</th>
+        <th>Units</th>
+        <th>Pre-requisite(s)</th>
+    </tr>
+    <tbody id="courses1stYear1st">
+    <tr>
+        <td><input id="txtCourse1stYear1st" class="input input-sm" placeholder="course Code" required /></td>
+        <td><input id="txtDescription1stYear1st" class="input input-sm" placeholder="Description" required /></td>
+        <td><input id="txtUnit1stYear1st" class="input input-sm" placeholder="Units" required /></td>
+        <td>
+            <span id="pPreReqs1stYear1st"></span>
+            <select id="selPreReq1stYear1st" onchange="selPreReq1stYear1st()" class="input input-sm"></select>
+        </td>
+    </tr>
+    <tr><td></td><td></td><td>Total Units: <span id="totalUnits1st1st">0</span></td></tr>
+    <tr>
+        <th class="text-right" colspan="4"><button class="btn btn-primary" id="btnSaveCourse1stYear1st" onclick="saveCourse1stYear1st()">Save Course</button> </th>
+    </tr>
+    </tbody>
+    <tr>
+        <th class="text-center alert-info" colspan="4" id="thFor1stYear2nd">1st Year | 2nd <span class="spanCur"></span></th>
+    </tr>
+    <tr class="alert-danger">
+        <th>Course Code</th>
+        <th>Description</th>
+        <th>Units</th>
+        <th>Pre-requisite(s)</th>
+    </tr>
+    <tbody id="courses1stYear2nd">
+    <tr>
+        <td><input id="txtCourse1stYear2nd" class="input input-sm" placeholder="course Code" required /></td>
+        <td><input id="txtDescription1stYear2nd" class="input input-sm" placeholder="Description" required /></td>
+        <td><input id="txtUnit1stYear2nd" class="input input-sm" placeholder="Units" required /></td>
+        <td>
+            <span id="pPreReqs1stYear2nd"></span>
+            <select id="selPreReq1stYear2nd" onchange="selPreReq1stYear2nd()" class="input input-sm"></select>
+        </td>
+    </tr>
+    <tr><td></td><td></td><td>Total Units: <span id="totalUnits1st2nd">0</span></td></tr>
+    <tr>
+        <th class="text-right" colspan="4"><button class="btn btn-primary" id="btnSaveCourse1stYear2nd" onclick="saveCourse1stYear2nd()">Save Course</button> </th>
+    </tr>
+    </tbody>
+    <tbody id="1stYear3rdBody">
+    <tr>
+        <th class="text-center alert-info" colspan="4" id="thFor1stYearThird">1st Year | 3rd Trimester</th>
+    </tr>
+    <tr class="alert-danger">
+        <th>Course Code</th>
+        <th>Description</th>
+        <th>Units</th>
+        <th>Pre-requisite(s)</th>
+    </tr>
+    </tbody>
+    <tbody id="courses1stYear3rd">
+    <tr>
+        <td><input id="txtCourse1stYear3rd" class="input input-sm" placeholder="course Code" required /></td>
+        <td><input id="txtDescription1stYear3rd" class="input input-sm" placeholder="Description" required /></td>
+        <td><input id="txtUnit1stYear3rd" class="input input-sm" placeholder="Units" required /></td>
+        <td>
+            <span id="pPreReqs1stYear3rd"></span>
+            <select id="selPreReq1stYear3rd" onchange="selPreReq1stYear3rd()" class="input input-sm"></select>
+        </td>
+    </tr>
+    <tr><td></td><td></td><td>Total Units: <span id="totalUnits1st3rd">0</span></td></tr>
+    <tr>
+        <th class="text-right" colspan="4"><button class="btn btn-primary" id="btnSaveCourse1stYear3rd" onclick="saveCourse1stYear3rd()">Save Course</button> </th>
+    </tr>
+    </tbody>
+    <!-- 2nd Year -->
+    <tr>
+        <th class="text-center alert-info" colspan="4" id="thFor2ndYear1st">2nd Year | 1st <span class="spanCur"></span></th>
+    </tr>
+    <tr class="alert-danger">
+        <th>Course Code</th>
+        <th>Description</th>
+        <th>Units</th>
+        <th>Pre-requisite(s)</th>
+    </tr>
+    <tbody id="courses2ndYear1st">
+    <tr>
+        <td><input id="txtCourse2ndYear1st" class="input input-sm" placeholder="course Code" required /></td>
+        <td><input id="txtDescription2ndYear1st" class="input input-sm" placeholder="Description" required /></td>
+        <td><input id="txtUnit2ndYear1st" class="input input-sm" placeholder="Units" required /></td>
+        <td>
+            <span id="pPreReqs2ndYear1st"></span>
+            <select id="selPreReq2ndYear1st" onchange="selPreReq2ndYear1st()" class="input input-sm"></select>
+        </td>
+    </tr>
+    <tr><td></td><td></td><td>Total Units: <span id="totalUnits2nd1st">0</span></td></tr>
+    <tr>
+        <th class="text-right" colspan="4"><button class="btn btn-primary" id="btnSaveCourse2ndYear1st" onclick="saveCourse2ndYear1st()">Save Course</button> </th>
+    </tr>
+    </tbody>
+    <tr>
+        <th class="text-center alert-info" colspan="4" id="thFor2ndYear2nd">2nd Year | 2nd <span class="spanCur"></span></th>
+    </tr>
+    <tr class="alert-danger">
+        <th>Course Code</th>
+        <th>Description</th>
+        <th>Units</th>
+        <th>Pre-requisite(s)</th>
+    </tr>
+    <tbody id="courses2ndYear2nd">
+    <tr>
+        <td><input id="txtCourse2ndYear2nd" class="input input-sm" placeholder="course Code" required /></td>
+        <td><input id="txtDescription2ndYear2nd" class="input input-sm" placeholder="Description" required /></td>
+        <td><input id="txtUnit2ndYear2nd" class="input input-sm" placeholder="Units" required /></td>
+        <td>
+            <span id="pPreReqs2ndYear2nd"></span>
+            <select id="selPreReq2ndYear2nd" onchange="selPreReq2ndYear2nd()" class="input input-sm"></select>
+        </td>
+    </tr>
+    <tr><td></td><td></td><td>Total Units: <span id="totalUnits2nd2nd">0</span></td></tr>
+    <tr>
+        <th class="text-right" colspan="4"><button class="btn btn-primary" id="btnSaveCourse2ndYear2nd" onclick="saveCourse2ndYear2nd()">Save Course</button> </th>
+    </tr>
+    </tbody>
+    <tbody id="2ndYear3rdtbody">
+    <tr>
+        <th class="text-center alert-info" colspan="4" id="thFor2ndtYearThird">2nd Year | 3rd Trimester</th>
+    </tr>
+    <tr class="alert-danger">
+        <th>Course Code</th>
+        <th>Description</th>
+        <th>Units</th>
+        <th>Pre-requisite(s)</th>
+    </tr>
+    </tbody>
+    <tbody id="courses2ndYear3rd">
+    <tr>
+        <td><input id="txtCourse2ndYear3rd" class="input input-sm" placeholder="course Code" required /></td>
+        <td><input id="txtDescription2ndYear3rd" class="input input-sm" placeholder="Description" required /></td>
+        <td><input id="txtUnit2ndYear3rd" class="input input-sm" placeholder="Units" required /></td>
+        <td>
+            <span id="pPreReqs2ndYear3rd"></span>
+            <select id="selPreReq2ndYear3rd" onchange="selPreReq2ndYear3rd()" class="input input-sm"></select>
+        </td>
+    <tr><td></td><td></td><td>Total Units: <span id="totalUnits2nd3rd">0</span></td></tr>
+    </tr>
+    <tr>
+        <th class="text-right" colspan="4"><button class="btn btn-primary" id="btnSaveCourse2ndYear3rd" onclick="saveCourse2ndYear3rd()">Save Course</button> </th>
+    </tr>
+    </tbody>
+    <!-- 3rd Year -->
+    <tbody id="tbody3rdYear1st">
+    <tr>
+        <th class="text-center alert-info" colspan="4" id="thFor3rddYear1st">3rd Year | 1st <span class="spanCur"></span></th>
+    </tr>
+    <tr class="alert-danger">
+        <th>Course Code</th>
+        <th>Description</th>
+        <th>Units</th>
+        <th>Pre-requisite(s)</th>
+    </tr>
+
+    </tbody>
+    <tbody id="courses3rdtYear1st">
+    <tr>
+        <td><input id="txtCourse3rdYear1st" class="input input-sm" placeholder="course Code" required /></td>
+        <td><input id="txtDescription3rdYear1st" class="input input-sm" placeholder="Description" required /></td>
+        <td><input id="txtUnit3rdYear1st" class="input input-sm" placeholder="Units" required /></td>
+        <td>
+            <span id="pPreReqs3rdYear1st"></span>
+            <select id="selPreReq3rdYear1st" onchange="selPreReq3rdYear1st()" class="input input-sm"></select>
+        </td>
+    </tr>
+    <tr><td></td><td></td><td>Total Units: <span id="totalUnits3rd1st">0</span></td></tr>
+    <tr>
+        <th class="text-right" colspan="4"><button class="btn btn-primary" id="btnSaveCourse3rdYear1st" onclick="saveCourse3rdYear1st()">Save Course</button> </th>
+    </tr>
+    </tbody>
+    <tbody id="tbody3rdYear2nd">
+    <tr>
+        <th class="text-center alert-info" colspan="4" id="thFor3rdYear2nd">3rd Year | 2nd <span class="spanCur"></span></th>
+    </tr>
+    <tr class="alert-danger">
+        <th>Course Code</th>
+        <th>Description</th>
+        <th>Units</th>
+        <th>Pre-requisite(s)</th>
+    </tr>
+    </tbody>
+
+    <tbody id="courses3rdYear2nd">
+    <tr>
+        <td><input id="txtCourse3rdYear2nd" class="input input-sm" placeholder="course Code" required /></td>
+        <td><input id="txtDescription3rdYear2nd" class="input input-sm" placeholder="Description" required /></td>
+        <td><input id="txtUnit3rdYear2nd" class="input input-sm" placeholder="Units" required /></td>
+        <td>
+            <span id="pPreReqs3rdYear2nd"></span>
+            <select id="selPreReq3rdYear2nd" onchange="selPreReq3rdYear2nd()" class="input input-sm"></select>
+        </td>
+    </tr>
+    <tr><td></td><td></td><td>Total Units: <span id="totalUnits3rd2nd">0</span></td></tr>
+    <tr>
+        <th class="text-right" colspan="4"><button class="btn btn-primary" id="btnSaveCourse3rdYear2nd" onclick="saveCourse3rdYear2nd()">Save Course</button> </th>
+    </tr>
+    </tbody>
+    <tbody id="3rdYear3rdtbody">
+    <tr>
+        <th class="text-center alert-info" colspan="4" id="thFor3rdtYear3rd">3rd Year | 3rd Trimester</th>
+    </tr>
+    <tr class="alert-danger">
+        <th>Course Code</th>
+        <th>Description</th>
+        <th>Units</th>
+        <th>Pre-requisite(s)</th>
+    </tr>
+    </tbody>
+    <tbody id="courses3rdYear3rd">
+    <tr>
+        <td><input id="txtCourse3rdYear3rd" class="input input-sm" placeholder="course Code" required /></td>
+        <td><input id="txtDescription3rdYear3rd" class="input input-sm" placeholder="Description" required /></td>
+        <td><input id="txtUnit3rdYear3rd" class="input input-sm" placeholder="Units" required /></td>
+        <td>
+            <span id="pPreReqs3rdYear3rd"></span>
+            <select id="selPreReq3rdYear3rd" onchange="selPreReq3rdYear3rd()" class="input input-sm"></select>
+        </td>
+    </tr>
+    <tr><td></td><td></td><td>Total Units: <span id="totalUnits3rd3rd">0</span></td></tr>
+    <tr>
+        <th class="text-right" colspan="4"><button class="btn btn-primary" id="btnSaveCourse3rdYear3rd" onclick="saveCourse3rdYear3rd()">Save Course</button> </th>
+    </tr>
+    </tbody>
+    <!-- 4th Year -->
+    <tbody id="tbody4thYear1st">
+    <tr>
+        <th class="text-center alert-info" colspan="4" id="thFor4thYear1st">4th Year | 1st <span class="spanCur"></span></th>
+    </tr>
+    <tr class="alert-danger">
+        <th>Course Code</th>
+        <th>Description</th>
+        <th>Units</th>
+        <th>Pre-requisite(s)</th>
+    </tr>
+    </tbody>
+    <tbody id="courses4thYear1st">
+    <tr>
+        <td><input id="txtCourse4thYear1st" class="input input-sm" placeholder="course Code" required /></td>
+        <td><input id="txtDescription4thYear1st" class="input input-sm" placeholder="Description" required /></td>
+        <td><input id="txtUnit4thYear1st" class="input input-sm" placeholder="Units" required /></td>
+        <td>
+            <span id="pPreReqs4thYear1st"></span>
+            <select id="selPreReq4thYear1st" onchange="selPreReq4thYear1st()" class="input input-sm"></select>
+        </td>
+    </tr>
+    <tr><td></td><td></td><td>Total Units: <span id="totalUnits4th1st">0</span></td></tr>
+    <tr>
+        <th class="text-right" colspan="4"><button class="btn btn-primary" id="btnSaveCourse4thYear1st" onclick="saveCourse4thYear1st()">Save Course</button> </th>
+    </tr>
+    </tbody>
+    <tbody id="tbody4thYear2nd">
+    <tr>
+        <th class="text-center alert-info" colspan="4" id="thFor3rdYear2nd">4th Year | 2nd <span class="spanCur"></span></th>
+    </tr>
+    <tr class="alert-danger">
+        <th>Course Code</th>
+        <th>Description</th>
+        <th>Units</th>
+        <th>Pre-requisite(s)</th>
+    </tr>
+    </tbody>
+    <tbody id="courses4thYear2nd">
+    <tr>
+        <td><input id="txtCourse4thYear2nd" class="input input-sm" placeholder="course Code" required /></td>
+        <td><input id="txtDescription4thYear2nd" class="input input-sm" placeholder="Description" required /></td>
+        <td><input id="txtUnit4thYear2nd" class="input input-sm" placeholder="Units" required /></td>
+        <td>
+            <span id="pPreReqs4thYear2nd"></span>
+            <select id="selPreReq4thYear2nd" onchange="selPreReq4thYear2nd()" class="input input-sm"></select>
+        </td>
+    </tr>
+    <tr><td></td><td></td><td>Total Units: <span id="totalUnits4th2nd">0</span></td></tr>
+    <tr>
+        <th class="text-right" colspan="4"><button class="btn btn-primary" id="btnSaveCourse4thYear2nd" onclick="saveCourse4thYear2nd()">Save Course</button> </th>
+    </tr>
+    </tbody>
+    <tbody id="4thYear3rdtbody">
+    <tr>
+        <th class="text-center alert-info" colspan="4">4th Year | 3rd Trimester</th>
+    </tr>
+    <tr class="alert-danger">
+        <th>Course Code</th>
+        <th>Description</th>
+        <th>Units</th>
+        <th>Pre-requisite(s)</th>
+    </tr>
+    </tbody>
+    <tbody id="courses4thYear3rd">
+    <tr>
+        <td><input id="txtCourse4thYear3rd" class="input input-sm" placeholder="course Code" required /></td>
+        <td><input id="txtDescription4thYear3rd" class="input input-sm" placeholder="Description" required /></td>
+        <td><input id="txtUnit4thYear3rd" class="input input-sm" placeholder="Units" required /></td>
+        <td>
+            <span id="pPreReqs4thYear3rd"></span>
+            <select id="selPreReq4thYear3rd" onchange="selPreReq4thYear3rd()" class="input input-sm"></select>
+        </td>
+    </tr>
+    <tr><td></td><td></td><td>Total Units: <span id="totalUnits4th3rd">0</span></td></tr>
+    <tr>
+        <th class="text-right" colspan="4"><button class="btn btn-primary" id="btnSaveCourse4thYear3rd" onclick="saveCourse4thYear3rd()">Save Course</button> </th>
+    </tr>
+    </tbody>
+    <tr>
+        <th colspan="4">
+            <button class="btn btn-lg btn-primary btn-block" onclick="submitAndSaveFinalCourses()" id="btnSaveFinalCourses">Save and Submit Data</button>
+        </th>
+    </tr>
+    </table>
+    </div>
