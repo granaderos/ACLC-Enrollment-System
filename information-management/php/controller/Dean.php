@@ -38,19 +38,18 @@ class Dean extends  DatabaseConnector {
 
             while($sem = $sql1->fetch()) {
 
-                $sql2 = $this->dbHolder->prepare("SELECT sectionCode, status, sectionId FROM sections WHERE programCode = ? AND year = ? AND semester = ? ORDER BY sectionCode;");
+                $sql2 = $this->dbHolder->prepare("SELECT sectionCode, status, sectionId, type FROM sections WHERE programCode = ? AND year = ? AND semester = ? ORDER BY sectionCode;");
                 $sql2->execute(array($progCode, $year[0], $sem[0]));
                 $counter = 0;
 
                 while($section = $sql2->fetch()) {
                     if($counter == 0) {
                         $data .= "<tr class='alert alert-info'><th colspan='5'>S.Y.: ".$year[0]." | Semester: ".$sem[0]."</th></tr>";
-                        $data .= "<tr>
+                        $data .= "<tr class='alert alert-danger'>
                                     <th>Section Code</th>
-                                    <th># of Students Enrolled</th>
-                                    <th># of Pending Registrations</th>
                                     <th>Status</th>
                                     <th>Action</th>
+                                    <th>Type</th>
                                   </tr>";
                     }
 
@@ -63,10 +62,9 @@ class Dean extends  DatabaseConnector {
 
                     $data .= "<tr>
                                 <td><a onclick=\"viewSchedule(".$section[2].", '".$section[0]."', '".$year[0]."', ".$sem[0].")\">".$section[0]."</a></td>
-                                <td>0</td>
-                                <td>0</td>
                                 <td>".$status."</td>
                                 <td>".$action."</td>
+                                <td>".$section[3]." section</td>
                               </tr>";
 
                     $counter++;
@@ -119,7 +117,6 @@ class Dean extends  DatabaseConnector {
         $exist = false;
 
         $start = $this->getCalculableTime($timeStart);
-//        $end = $this->getCalculableTime($timeEnd);
 
         $sql = $this->dbHolder->prepare("SELECT * FROM schedule WHERE sectionId = ? AND courseCode = ?;");
         $sql->execute(array($sectionId, $course));
@@ -134,9 +131,6 @@ class Dean extends  DatabaseConnector {
                     break;
                 }
             }
-
-            //echo "timeStart = ".$timeStart."\ntimeEnd = ".$timeEnd."\nroom = ".$room."\nday = ".$day."\nsec3 = ".$sec[3]."\nsec4 = ".$sec[4]."\nroom = ".$sec[6]."\ndaydb = ".$sec[5]."\n\n";
-
         }
 
         if($exist) {
@@ -223,18 +217,25 @@ class Dean extends  DatabaseConnector {
                                                 AND sc.courseCode = ?;");
             $sql3->execute(array($sectionId, $content[2]));
 
-            $profName = "n/a";
+            $profName = "---";
             if($prof = $sql3->fetch()) $profName = $prof[1].", ".$prof[2]." ".$prof[3];
 
+            $enrolled = $this->getNumberOfEnrolledStudents($sectionId, $content[2]);
+            $prereged = $this->getNumberOfPreregistrations($sectionId, $content[2]);
+            if($enrolled == null || $enrolled == 0) $enrolled = 0;
+            if($prereged == null || $prereged == 0) $prereged = 0;
+            //echo "<br />sectionId = ".$sectionId."\ncourseCode = ".$content[2]."<br />";
             $data .= "<tr>
                         <td>".$content[2]."<br />".$content[6]."</td>
+                        <td>".$enrolled."</td>
+                        <td>".$prereged."</td>
                         <td>".$profName."</td>
-                        <td><a data-toggle='modal' href='#setScheduleDiv' onclick=\"setCourseSectionSched('".$sectionId."', '".$content[2]."')\">view Schedule</a> |
-                        <a data-toggle='modal' href='#assignProfessorDiv' onclick=\"assignProfessor('".$sectionId."', '".$content[2]."')\">assign instructor</a></td></tr>";
+                        <td><a data-toggle='modal' href='#setScheduleDiv' onclick=\"setCourseSectionSched('".$sectionId."', '".$content[2]."')\"><span class='glyphicon glyphicon-eye-open'></span>&nbsp;schedule</a> |
+                        <a data-toggle='modal' href='#assignProfessorDiv' onclick=\"assignProfessor('".$sectionId."', '".$content[2]."')\"><span class='glyphicon glyphicon-edit'></span>&nbsp;instructor</a></td></tr>";
         }
 
         if($data == "") $data = "<tr><td>Oh... seems like there are no courses retrieved;</td></tr>";
-        else $data = "<tr><th>Courses</th><th>Assigned Instructor</th><th>Actions</th></tr>".$data;
+        else $data = "<tr class='alert alert-danger'><th>Courses</th><th>Enrolled</th><th>Preregistered</th><th>Assigned Instructor</th><th>Actions</th></tr>".$data;
 
         echo "<table class='table'>".$data."</table>";
 
@@ -256,14 +257,6 @@ class Dean extends  DatabaseConnector {
                             <td>".$sched[6]."</td>
                       </tr>";
         }
-
-        /*$sql1 = $this->dbHolder->prepare("SELECT st.* FROM staff st, schedule sc,sections se, professorSchedule ps, config c
-                                            WHERE se.sy = c.sy
-                                            AND se.year = c.year
-                                            AND se.semester = c.sem
-                                            AND st.staffId = ps.profId
-                                            AND st.type = 'instructor'
-                                            AND st.staffId = ?;");*/
 
         $sql1 = $this->dbHolder->query("SELECT * FROM staff WHERE type='instructor';");
 
@@ -545,7 +538,353 @@ class Dean extends  DatabaseConnector {
             $sql1->execute(array($pre[1], $pre[2], $pre[3]));
         }
 
+        $sql2 = $this->dbHolder->prepare("DELETE FROM preregistration WHERE studentId = ?;");
+        $sql2->execute(array($_SESSION["approveStudentId"]));
+
         $this->closeConnection();
+    }
+
+    function displayCurriculumData() {
+        $this->openConnection();
+
+        $sql = $this->dbHolder->query("SELECT * FROM config;");
+        $config = $sql->fetch();
+
+        $curSet = "<table class='table table-hover container-fluid'>
+                <tr class='alert alert-danger'>
+                    <th>Curriculum Year: </th>
+                    <th>".$config[0]."</th>
+                    <th><a><span class='glyphicon glyphicon-edit'></span> &nbsp; change</a></th>
+                </tr>
+                <tr class='alert alert-info'>
+                    <th>Curriculum Type:</th>
+                    <th>".$config[1]."</th>
+                    <th><a onclick=\"promptChangeCurType('".$config[1]."')\"><span class='glyphicon glyphicon-edit'></span> &nbsp;  change</a></th>
+                </tr>
+                </table>";
+        $curType = $config[1];
+        $sql1 = $this->dbHolder->query("SELECT * FROM curriculum;");
+        $curData = "";
+        while($con = $sql1->fetch()) {
+            $curData .= "<option>".$con[1]."</option>";
+        }
+        echo json_encode(array("curSet"=>$curSet, "curType"=>$curType, "curData"=>$curData));
+
+        $this->closeConnection();
+    }
+
+    function changeCurriculumType($toChage) {
+        $this->openConnection();
+
+        $sql = $this->dbHolder->prepare("UPDATE config SET division = ?;");
+        $sql->execute(array($toChage));
+
+        $this->closeConnection();
+    }
+
+    function getNameSched($keyWord, $toSearch) {
+        $this->openConnection();
+
+        if($toSearch=="student") {
+            $sql = $this->dbHolder->prepare("SELECT * FROM students
+                                                WHERE lastname LIKE ?
+                                                OR firstname LIKE ?
+                                                OR middlename LIKE ?
+                                                OR studentId LIKE ?;");
+            $sql->execute(array("%".$keyWord."%", "%".$keyWord."%", "%".$keyWord."%", "%".$keyWord."%"));
+
+            $data = "";
+            while($s = $sql->fetch()) {
+                $data .= "<tr>
+                            <td>".$s[1]."</td>
+                            <td>".$s[2].", ".$s[3]." ".$s[4]."</td>
+                            <td>".$s[18]."</td>
+                            <td>".$this->getOrder($s[17])." Year</td>
+                            <td><a onclick=\"viewScheduleOfSI('student', ".$s[1].")\">view schedule</a></td>
+                          </tr>";
+            }
+            if($data == "") $data = "<h3>No results for ".$keyWord.";</h3>";
+            else $data = "<table class='table table-striped'>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Full Name</th>
+                                <th>Program</th>
+                                <th>Year Level</th>
+                                <th></th>
+                            </tr>
+                            ".$data."
+                          </table>";
+            echo $data;
+        } else {
+            $sql = $this->dbHolder->prepare("SELECT * FROM staff
+                                                WHERE (lastName LIKE ?
+                                                OR firstName LIKE ?
+                                                OR middleName LIKE ?)
+                                                AND type='instructor';");
+            $sql->execute(array("%".$keyWord."%", "%".$keyWord."%", "%".$keyWord."%"));
+
+            $data = "";
+            while($s = $sql->fetch()) {
+                $data .= "<tr>
+                            <td>".$s[1].", ".$s[2]." ".$s[3]."</td>
+                            <td><a onclick=\"viewScheduleOfSI('instructor', ".$s[0].")\">view schedule</a></td>
+                          </tr>";
+            }
+            if($data == "") $data = "<h3>No results for ".$keyWord.";</h3>";
+            else $data = "<table class='table table-striped'>
+                            <tr>
+                                <th>Full Name</th>
+                                <th></th>
+                            </tr>
+                            ".$data."
+                          </table>";
+            echo $data;
+        }
+
+        $this->closeConnection();
+    }
+
+    function viewScheduleOfSI($type, $id) {
+        $this->openConnection();
+
+        $sql3 = $this->dbHolder->query("SELECT * FROM config;");
+        $config = $sql3->fetch();
+        if($type == "student") {
+            $sql2 = $this->dbHolder->prepare("SELECT * FROM students WHERE studentId = ?;");
+            $sql2->execute(array($id));
+            $studInfo = $sql2->fetch();
+
+            $sql1 = $this->dbHolder->prepare("SELECT DISTINCT sc.day FROM schedule sc, sections se, studentSchedule ss, config c, days d
+                                            WHERE se.sectionId = sc.sectionId
+                                            AND se.sectionId = ss.sectionId
+                                            AND se.sy = c.sy
+                                            AND se.year = c.year
+                                            AND se.semester = c.sem
+                                            AND sc.courseCode = ss.courseCode
+                                            AND sc.day = d.day
+                                            AND ss.studentId = ?
+                                            ORDER BY d.id;");
+            $sql1->execute(array($id));
+
+            $data= "";
+            while($day = $sql1->fetch()) {
+                $data .= "<tr class='alert alert-info'><th colspan='3'>".$day[0]."</th></tr>";
+                $sql = $this->dbHolder->prepare("SELECT sc.timeStart, sc.timeEnd, sc.room, sc.courseCode FROM schedule sc, sections se, studentSchedule ss, config c, days d
+                                            WHERE se.sectionId = sc.sectionId
+                                            AND se.sectionId = ss.sectionId
+                                            AND se.sy = c.sy
+                                            AND se.year = c.year
+                                            AND se.semester = c.sem
+                                            AND sc.courseCode = ss.courseCode
+                                            AND sc.day = d.day
+                                            and sc.day = ?
+                                            AND ss.studentId = ?
+                                            ORDER BY d.id, sc.timeStart, sc.timeEnd;");
+                $sql->execute(array($day[0], $id));
+
+                while($sched = $sql->fetch()) {
+                    $data .= "<tr>
+                            <th>".$sched[3]."</th>
+                            <th>".$sched[0]." - ".$sched[1]."</th>
+                            <th>".$sched[2]."</th>
+                          </tr>";
+                }
+            }
+
+            if($data == "") $data = "<tr><td>No schedule yet;</td></tr>";
+            else $data = "
+            <table class='table'>
+                <tr>
+                    <th>Student Name:</th>
+                    <td>".$studInfo[2].", ".$studInfo[3]." ".$studInfo[4]."</td>
+                    <th>School Year:</th>
+                    <td>".$config[6]."</td>
+                </tr>
+                <tr>
+                    <th>Program/Year:</th>
+                    <td>".$studInfo[18]."/".$this->getOrder($studInfo[17])." Year</td>
+                    <th>".$config[1].":</th>
+                    <td>".$this->getOrder($config[5])." Sem</td>
+                </tr>
+            </table>
+            <table class='table table-responsive table-striped'>
+                        <tr class='alert alert-danger'>
+                            <th>Course</th>
+                            <th>Time</th>
+                            <th>Room</th>
+                        </tr>
+                        ".$data."
+                      </table>";
+            $_SESSION["searchSchedule"] = $data;
+        } else {
+            $sql4 = $this->dbHolder->prepare("SELECT * FROM staff WHERE staffId = ?;");
+            $sql4->execute(array($id));
+            $profInfo = $sql4->fetch();
+
+            $sql1 = $this->dbHolder->prepare("SELECT DISTINCT sc.day FROM schedule sc, sections se, professorSchedule ps, config c, days d
+                                            WHERE se.sectionId = sc.sectionId
+                                            AND se.sectionId = ps.sectionId
+                                            AND se.sy = c.sy
+                                            AND se.year = c.year
+                                            AND se.semester = c.sem
+                                            AND sc.courseCode = ps.courseCode
+                                            AND sc.day = d.day
+                                            AND ps.profId = ?
+                                            ORDER BY d.id;");
+            $sql1->execute(array($id));
+
+            $data= "";
+            while($day = $sql1->fetch()) {
+                $data .= "<tr class='alert alert-info'><th colspan='3'>".$day[0]."</th></tr>";
+                $sql = $this->dbHolder->prepare("SELECT sc.timeStart, sc.timeEnd, sc.room, sc.courseCode FROM schedule sc, sections se, professorSchedule ps, config c, days d
+                                            WHERE se.sectionId = sc.sectionId
+                                            AND sc.sectionId = ps.sectionId
+                                            AND se.sy = c.sy
+                                            AND se.year = c.year
+                                            AND se.semester = c.sem
+                                            AND sc.courseCode = ps.courseCode
+                                            AND sc.day = d.day
+                                            and sc.day = ?
+                                            AND ps.profId = ?
+                                            ORDER BY d.id, sc.timeStart, sc.timeEnd;");
+                $sql->execute(array($day[0], $id));
+
+                while($sched = $sql->fetch()) {
+                    $data .= "<tr>
+                            <th>".$sched[3]."</th>
+                            <th>".$sched[0]." - ".$sched[1]."</th>
+                            <th>".$sched[2]."</th>
+                          </tr>";
+                }
+            }
+
+            if($data == "") $data = "<tr><td>No schedule yet;</td></tr>";
+            else $data = "
+            <table class='table'>
+                <tr>
+                    <th>Faculty Name:</th>
+                    <td>".$profInfo[1].", ".$profInfo[2]." ".$profInfo[3]."</td>
+                    <th>School Year:</th>
+                    <td>".$config[6]."</td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td></td>
+                    <th>".$config[1].":</th>
+                    <td>".$this->getOrder($config[5])."</td>
+                </tr>
+            </table>
+            <table class='table table-responsive table-striped'>
+                        <tr class='alert alert-danger'>
+                            <th>Course</th>
+                            <th>Time</th>
+                            <th>Room</th>
+                        </tr>
+                        ".$data."
+                      </table>";
+            $_SESSION["searchSchedule"] = $data;
+        }
+        $this->closeConnection();
+    }
+
+    function displayGradesEncodingStatus() {
+        $this->openConnection();
+
+        $sql = $this->dbHolder->query("SELECT pEncodingStatus, mEncodingStatus, pfEncodingStatus, fEncodingStatus FROM config;");
+        $config = $sql->fetch();
+
+        $p = "<tr>
+                <td>Prelim Grades Encoding</td>
+                <td>Open</td>
+                <td><a class='btn btn-danger' onclick=\"toggleEncodingStatus('pEncodingStatus', 0)\"><span class='glyphicon glyphicon-lock'></span>&nbsp;LOCK</a></td>
+              </tr>";
+        if($config[0] == 0)
+            $p = "<tr>
+                <td>Prelim Grades Encoding</td>
+                <td>LOCKED</td>
+                <td><a class='btn btn-primary' onclick=\"toggleEncodingStatus('pEncodingStatus', 1)\"><span class='glyphicon glyphicon-edit'></span>&nbsp;OPEN</a></td>
+              </tr>";
+        $m = "<tr>
+                <td>Midterm Grades Encoding</td>
+                <td>Open</td>
+                <td><a class='btn btn-danger' onclick=\"toggleEncodingStatus('mEncodingStatus', 0)\"><span class='glyphicon glyphicon-lock'></span>&nbsp;LOCK</a></td>
+              </tr>";
+        if($config[1] == 0)
+            $m = "<tr>
+                <td>Midterm Grades Encoding</td>
+                <td>LOCKED</td>
+                <td><a class='btn btn-primary' onclick=\"toggleEncodingStatus('mEncodingStatus', 1)\"><span class='glyphicon glyphicon-edit'></span>&nbsp;OPEN</a></td>
+              </tr>";
+        $pf = "<tr>
+                <td>Pre-final Grades Encoding</td>
+                <td>Open</td>
+                <td><a class='btn btn-danger' onclick=\"toggleEncodingStatus('pfEncodingStatus', 0)\"><span class='glyphicon glyphicon-lock'></span>&nbsp;LOCK</a></td>
+              </tr>";
+        if($config[2] == 0)
+            $pf = "<tr>
+                <td>Pre-final Grades Encoding</td>
+                <td>LOCKED</td>
+                <td><a class='btn btn-primary' onclick=\"toggleEncodingStatus('pfEncodingStatus', 1)\"><span class='glyphicon glyphicon-edit'></span>&nbsp;OPEN</a></td>
+              </tr>";
+        $f = "<tr>
+                <td>Final Grades Encoding</td>
+                <td>Open</td>
+                <td><a class='btn btn-danger' onclick=\"toggleEncodingStatus('fEncodingStatus', 0)\"><span class='glyphicon glyphicon-lock'></span>&nbsp;LOCK</a></td>
+              </tr>";
+        if($config[3] == 0)
+            $f = "<tr>
+                <td>Final Grades Encoding</td>
+                <td>LOCKED</td>
+                <td><a class='btn btn-primary' onclick=\"toggleEncodingStatus('fEncodingStatus', 1)\"><span class='glyphicon glyphicon-edit'></span>&nbsp;OPEN</a></td>
+              </tr>";
+
+        echo "<table class='table table-striped'>
+                <tr>
+                    <th>Period</th>
+                    <th>Current Status</th>
+                    <th>Action</th>
+                </tr>
+                ".$p.
+                 $m.
+                 $pf.
+                 $f."
+              </table>";
+
+
+
+        $this->closeConnection();
+    }
+
+    function updateStatusEncoding($period, $toUpdate) {
+        $this->openConnection();
+
+        $sql = $this->dbHolder->prepare("UPDATE config SET ".$period." = ?;");
+        $sql->execute(array($toUpdate));
+
+        $this->closeConnection();
+    }
+
+    function getNumberOfEnrolledStudents($sectionId, $courseCode) {
+        $sql = $this->dbHolder->prepare("SELECT DISTINCT count(ss.studentId) FROM studentSchedule ss, sections s, config c
+                                            WHERE s.sectionId = ss.sectionId
+                                            AND s.sy = c.sy
+                                            AND s.semester = c.sem
+                                            AND s.sectionId = ?
+                                            AND ss.courseCode = ?;");
+        $sql->execute(array($sectionId, $courseCode));
+        return $sql->fetch()[0];
+    }
+
+    function getNumberOfPreregistrations($sectionId, $courseCode) {
+        $sql = $this->dbHolder->prepare("SELECT count(p.studentId) FROM preregistration p, sections s, config c
+                                            WHERE s.sectionId = p.sectionId
+                                            AND s.sy = c.sy
+                                            AND s.semester = c.sem
+                                            AND s.sectionId = ?
+                                            AND p.courseCode = ?
+                                            GROUP BY p.studentId;");
+        $sql->execute(array($sectionId, $courseCode));
+        return $sql->fetch()[0];
     }
 
     function getOrder($num) {

@@ -13,6 +13,8 @@ $(document).ready(function() {
         progSem = $("#selSOrT").val();
         progYear = $("#selNoOfYears").val();
 
+        displayPrevAddedCourses(progCur, progSem, progYear);
+
         $("#progCur").html(progCur);
         $("#progSem").html(progSem);
         $("#progYear").html(progYear);
@@ -24,9 +26,53 @@ $(document).ready(function() {
         $("#currentYear").html(1);
         $("#currentSem").html(1);
     });
-
 });
 
+function displayPrevAddedCourses(progCur, progSem, progYear) {
+    $.ajax({
+        type: "POST",
+        url: "../../../php/programs/displayPrevAddedCourses.php",
+        data: {progCur: progCur, progSem: progSem, progYear: progYear},
+        success: function(data) {
+            $("#tblAddedCourses").html(data);
+        },
+        error: function(data) {
+            alert("Mj! :( ERROR IN displayPrevAddedCourses \n\n" + JSON.stringify(data));
+        }
+    });
+}
+
+function searchCourseCode() {
+    var course = $("#txtCourseCode").val();
+    if(course.trim() != "") {
+        $.ajax({
+            type: "POST",
+            url: "../../../php/programs/searchCourse.php",
+            data: {courseCode: course},
+            success: function(data) {
+                var obj = JSON.parse(data);
+                if(obj.exist == "true") {
+                    $("#txtDescription").val(obj.desc);
+                    $("#txtUnit").val(obj.units);
+                    if(obj.labUnits > 0) $("#txtUnitLab").val(obj.labUnits);
+                    $("#pPreReqs").html(obj.preq);
+                    /*if(obj.preq != "none") {
+                        var p = "";
+                        for(var i = 0; i < obj.preq.length; i++) {
+                            p += obj.preqs[i]+"<br />";
+                            preReqs.push(obj.preqs[i]);
+                        }
+                        $("#pPreReqs").html(p);
+                    }*/
+
+                }
+            },
+            error: function(data) {
+                alert("Mj! :( Error in searching course code " + JSON.stringify(data));
+            }
+        });
+    }
+}
 
 function displayCurriculumOptions() {
     $.ajax({
@@ -107,7 +153,7 @@ function addTempCourse() {
                     else {
                         var curTotal = $("#totalUnits").html();
                         $("#totalUnits").html(parseInt(curTotal)+parseInt(unit));
-
+                        if(labUnit > 0) unit += ("/"+labUnit);
                         $("#coursesTbody").prepend("<tr><td>"+code+"</td><td>"+description+"</td><td>"+unit+"</td><td>"+preqs+"</td></tr>");
                         $("#txtCourseCode").val("");
                         $("#txtDescription").val("");
@@ -125,7 +171,6 @@ function addTempCourse() {
 }
 
 function displayPossiblePrerequisites(curriculum, semType, year, sem) {
-    alert("called this");
     $.ajax({
         type: "POST",
         url: "../../../php/programs/displayPossiblePrerequisites.php",
@@ -156,7 +201,7 @@ function saveCourses() {
             $.ajax({
                 type: "POST",
                 url: "../../../php/programs/saveCourses.php",
-                data: {progSem: progSem},
+                data: {progSem: progSem, curHTML: $("#tblAddedCourses").html()},
                 success: function(data) {
                     $("#tblAddedCourses").append(data);
                     $("#coursesTbody").html("");

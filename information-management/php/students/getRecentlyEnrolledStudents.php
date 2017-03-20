@@ -9,4 +9,4 @@
 include_once "../controller/Students.php";
 $obj = new Students();
 
-$obj->getRecentlyEnrolledStudents();
+$obj->getRecentlyEnrolledStudents($_POST["name"], $_POST["program"], $_POST["year"]);

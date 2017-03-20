@@ -19,6 +19,7 @@ if(!isset($_SESSION["type"]))
     <body>
         <div class="mainContainer" id="divDeanMainContainer" class="container-fluid">
             <h2>Programs</h2>
+            <em>(Click specific program to view its available sections)</em><br />
             <div id="deanProgramContainer"></div>
 
             <div id="divProgContainer" style="color: #000000"></div>
@@ -31,6 +32,22 @@ if(!isset($_SESSION["type"]))
 
                 <div id="displaySectionsDiv"></div>
             </div>
+        </div>
+
+        <div id="garadesEncodingSettingsDiv" class="hidden container-fluid">
+            <h2>Grades Encoding Setting</h2>
+            <div id="gradesEncodingSettingsData"></div>
+        </div>
+
+        <div id="searchScheduleDiv" class="hidden container-fluid">
+            <h2>Search Faculty or Students' Schedule</h2>
+            <select class='form-control' id='schedToSearch' onclick="getNameSched()">
+                <option value="student">Student</option>
+                <option value="faculty">Faculty</option>
+            </select>
+            <input type="text" onkeyup="getNameSched()" placeholder="enter name / student number " class="form-control" id="deanToGetSched" aria-describedby="addonSearch" />
+
+            <div id="schedResultNamesContainer"></div>
         </div>
 
         <div class="modal fade" id="showStudentRegistrationDiv">
@@ -46,7 +63,7 @@ if(!isset($_SESSION["type"]))
                     <div class="modal-body">
                         <div class="panel-body text-left">
                             <div id="studentRegistrationContainer"></div>
-                            <button class="btn btn-block btn-primary">Approve Pre-registration</button>
+                            <button class="btn btn-block btn-primary" onclick="approveStudentPrereg()">Approve Pre-registration</button>
                         </div>
                     </div>
                 </div>
@@ -104,6 +121,11 @@ if(!isset($_SESSION["type"]))
             </div>
         </div>
 
+       <div id="curriculumSettingsContainerDiv" class="container-fluid hidden">
+           <h2>Curriculum Settings</h2>
+           <div id="curriculumSettingsData" class="container-fluid"></div>
+       </div>
+
         <div id="preregContainerDiv" class='hidden'>
             <h2>Pre-registration Status</h2>
             <table class='table'>
@@ -160,7 +182,6 @@ if(!isset($_SESSION["type"]))
                                 <select id="schedStartTime" onclick="displayEndTime()" class="form-control">
                                     <option value=1>07:00 AM</option>
                                     <option value=2>07:30 AM</option>
-                                    <option value=3>08:00 AM</option>
                                     <option value=4>08:00 AM</option>
                                     <option value=5>08:30 AM</option>
                                     <option value=6>09:00 AM</option>
@@ -194,7 +215,6 @@ if(!isset($_SESSION["type"]))
                                 <select id="schedEndTime" class="form-control">
                                     <option value=2>07:30 AM</option>
                                     <option value=3>08:00 AM</option>
-                                    <option value=4>08:00 AM</option>
                                     <option value=5>08:30 AM</option>
                                     <option value=6>09:00 AM</option>
                                     <option value=7>09:30 AM</option>

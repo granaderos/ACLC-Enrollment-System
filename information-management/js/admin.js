@@ -26,9 +26,8 @@ $(document).ready(function() {
                         type: "POST",
                         url: "../php/admin/addStaff.php",
                         data: {lastName: lastName, firstName: firstName, middleName: middleName, username: username, type: type},
-                        success: function(data) {
+                        success: function() {
                             alert("New employee added successfully!");
-                            alert("Default password: " + data);
                         },
                         error: function(data) {
                             console.log("error in adding staff " + JSON.stringify(data));
@@ -42,13 +41,13 @@ $(document).ready(function() {
             alert("Please check your inputs!");
         }
 
-        lastName = $("#lastName").val("");
-        middleName = $("#firstName").val("");
-        firstName = $("#lastName").val("");
-        type = $("#type").val("");
-        username = $("#username").val("");
-        password = $("#password").val("");
-        confirmPassword = $("#confirmPassword").val("");
+        $("#lastName").val("");
+        $("#middleName").val("");
+        $("#firstName").val("");
+        $("#type").val("");
+        $("#username").val("");
+        $("#password").val("");
+        $("#confirmPassword").val("");
 
         return false;
     });

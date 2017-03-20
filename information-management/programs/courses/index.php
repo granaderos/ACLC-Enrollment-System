@@ -17,8 +17,8 @@ if(!isset($_SESSION["type"]))
     <link href="../../css/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
     <link href="../../css/programs.css" rel="stylesheet" type="text/css"/>
 
-    <script src="../../js/jquery-1.9.1.min.js" type="text/javascript"></script>
-    <script src="../../js/jquery-ui-1.10.2.min.js" type="text/javascript"></script>
+    <script src="../../js/jquery-1.12.4.min.js" type="text/javascript"></script>
+    <script src="../../js/jquery-ui-1.12.1.min.js" type="text/javascript"></script>
     <script src="../../js/bootstrap.min.js" type="text/javascript"></script>
     <script src="../../js/courses.js" type="text/javascript"></script>
 </head>
@@ -40,7 +40,7 @@ if(!isset($_SESSION["type"]))
         }
         ?>
 </div>
-<div id="programMainContainer" class="container-fluid">
+<div id="programMainContainer" style="margin-top: 100px;" class="container-fluid">
     <div class="form-inline">
         <h2>Courses for <span id="spanProg"><?php if(isset($_SESSION["program"])) echo $_SESSION["program"]; ?></span></h2>
         <label>Curriculum: </label>

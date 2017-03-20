@@ -17,24 +17,24 @@
             <form>
                 <table >
                    <tr>
-                       <td>First Name: </td><td><input type="text" name="firstName" id="firstName" class="field"/></td>
+                       <td>First Name: </td><td><input type="text" name="firstName" id="firstName" class="form-control field"/></td>
                    </tr>
                     <tr>
-                        <td>Middle Name:</td><td><input type="text" name="lastName" id="middleName" class="field" /> </td>
+                        <td>Middle Name:</td><td><input type="text" name="lastName" id="middleName" class="form-control field" /> </td>
                     </tr>
                     <tr>
-                        <td>Last Name:</td><td><input type="text" name="lastName" id="lastName" class="field"/></td>
+                        <td>Last Name:</td><td><input type="text" name="lastName" id="lastName" class="form-control field"/></td>
                     </tr>
                     <tr>
                         <td>Type:</td>
                         <td>
-                            <select name="type" id="type" class="field">
+                            <select name="type" id="type" class="form-control field">
                                 <option value="HR">HR</option>
                             </select>
                         </td>
                     </tr>
                     <tr>
-                    <td>Username </td><td><input type="text" name="username" id="username" class="field"/></td>
+                    <td>Username </td><td><input type="text" name="username" id="username" class="form-control field"/></td>
                     </tr>
                 </table>
 

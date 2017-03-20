@@ -45,7 +45,7 @@ function deleteRequirement(id) {
             $("#divDialog").dialog("close");
         }
     }
-    showDialog("You are about to delete the selected requirement. Are you sure to continue?", "Confirmation", buttons);
+    showDialog("You are about to delete the selected requirements. Are you sure to continue?", "Confirmation", buttons);
 }
 
 function editRequirement(id) {

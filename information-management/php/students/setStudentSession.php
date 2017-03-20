@@ -8,4 +8,4 @@
  */
 
 session_start();
-$_SESSION["studentId"] = $_POST["studentId"];
+$_SESSION["regStudentId"] = $_POST["studentId"];

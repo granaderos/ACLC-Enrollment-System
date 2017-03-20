@@ -9,6 +9,20 @@ $(document).ready(function() {
     displayEncodingForm();
 });
 
+function getPrintableGrades(sectionId, courseCode, staffId) {
+    $.ajax({
+        type: "POST",
+        url: "../../php/faculty/getPrintableGrades.php",
+        data: {sectionId: sectionId, courseCode: courseCode, staffId: staffId},
+        success: function(data) {
+            window.open("print-class-grades", "Class Grades", "width=1000,height=800");
+        },
+        error: function(data) {
+            alert("error in getting printable grades Mj " + JSON.stringify(data));
+        }
+    })
+}
+
 function displayEncodingForm() {
     $.ajax({
         type: "POST",

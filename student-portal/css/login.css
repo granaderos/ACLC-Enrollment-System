@@ -1,17 +1,29 @@
 #left-div{
+
+    border-radius: 10px;
+    background-color: #ffffff;
+    margin-top: 100px;
+    width: 70%;
+}
+
+#left-div img {
+    height: 50%;
+    width: 100%;
+    margin: auto;
+}
+
+#loginForm{
     border: 2px solid #000000;
     border-radius: 10px;
     width: 450px;
-    height: 500px;
     background-color: #ffffff;
-    margin-top: 20px;
-    margin-left: 40px;
+    height: 420px;
     padding: 30px;
-    position: absolute;
 
 }
 p{
     font-size: 12px;
+
 }
 
 table{
@@ -22,9 +34,12 @@ table{
 td{
     font-size: 12px;
     padding: 5px;
+
+
 }
 
 .button{
+
     font-size: 14px;
     margin-top: 20px;
     width: 300px;
@@ -32,11 +47,9 @@ td{
     color: #ffffff;
     background: #2E3191;
 }
-
 select{
     width: 170px;
 }
-
 input{
     width: 170px;
 }

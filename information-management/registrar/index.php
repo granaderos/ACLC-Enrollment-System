@@ -8,6 +8,7 @@
 
 <html>
     <head>
+        <title>ACLC | Registrar</title>
         <?php include_once "../misc/imports.html"; ?>
         <link href="../css/registrar.css" rel="stylesheet" type="text/css" />
         <script src="../js/students.js" type="text/javascript"></script>
@@ -15,7 +16,7 @@
     <body>
         <?php include_once "../misc/header.php"; ?>
         <?php include_once "../navs/registrarNav.html"; ?>
-        <div id="divRegistrarMainContainer" class="mainContainer">
+        <div id="divRegistrarMainContainer"  class="mainContainer">
             <h2>Enroll Student</h2><br/>
             <div class="container-fluid">
                 <div class="panel panel-info">

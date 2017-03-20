@@ -12,7 +12,7 @@ class Student extends DatabaseConnector {
     function login($studentId, $username, $password) {
         $this->openConnection();
 
-        $sql = $this->dbHolder->prepare("SELECT * FROM students WHERE studentId = ? AND username = ? AND password = ?;");
+        $sql = $this->dbHolder->prepare("SELECT * FROM students WHERE studentId = ? AND username = ? AND password = password(?);");
         $sql->execute(array($studentId, $username, $password));
 
         if($data = $sql->fetch()) {
@@ -27,6 +27,69 @@ class Student extends DatabaseConnector {
         } else {
             echo "invalid";
         }
+
+        $this->closeConnection();
+    }
+
+    function displayAccountBalance() {
+        $this->openConnection();
+
+        $sql = $this->dbHolder->query("SELECT * FROM config;");
+        $config = $sql->fetch();
+
+        $sql1 = $this->dbHolder->prepare("SELECT * FROM transactions WHERE studentId = ?
+                                            AND sy = ?
+                                            AND sem = ?
+                                            ORDER BY datePaid;");
+        $sql1->execute(array($_SESSION["studentId"], $config[6], $config[5]));
+
+        $sql2 = $this->dbHolder->prepare("SELECT * FROM studentBalance
+                                            WHERE studentId = ?
+                                            AND sy = ?
+                                            AND sem = ?;");
+        $sql2->execute(array($_SESSION["studentId"], $config[6], $config[5]));
+        $bal = $sql2->fetch();
+
+        $curBal = $bal[2];
+        if($bal[2] == 0) $curBal = "00.00";
+        $balData = "<label>Total Fee for S.Y. ".$config[6]." | ".$this->getOrder($config[5])." Year: </label>
+                    <span style='font-size: 25px;'>Php ".$bal[3]."</span><br />
+                    <label>Current Balance: </label>
+                    <span style='font-size: 25px;'>Php ".$curBal."</span><br />
+";
+        $data = "";
+        $totalPaid = 0;
+        while($trans = $sql1->fetch()) {
+            $totalPaid += $trans[3];
+            $f = new NumberFormatter("en", NumberFormatter::SPELLOUT);
+            $tranWord = $f->format($trans[3]);
+            $data .= "<tr>
+                        <th>".$trans[4]."</th>
+                        <th>".$trans[2]."</th>
+                        <th>Php ".$trans[3]." (".$tranWord.")</th>
+                      </tr>";
+        }
+        if($data == "") $data = "<h4>No transactions retrieved;</h4>";
+        else $data = "<table class='table table-striped'>
+                        <tr class='alert alert-danger'>
+                            <th colspan='3'>
+                                <h3>Transaction History</h3>
+                            </th>
+                        </tr>
+                        <tr class='alert alert-info'>
+                            <th>Date</th>
+                            <th>Payment Description</th>
+                            <th>Amount Paid</th>
+                        </tr>
+                        ".$data."
+                        <tr class='alert alert-danger'>
+                            <th></th>
+                            <th>Total Paid:</th>
+                            <th>Php ".$totalPaid."</th>
+                        </tr>
+                      </table>";
+
+        echo $balData.$data;
 
         $this->closeConnection();
     }
@@ -104,8 +167,10 @@ class Student extends DatabaseConnector {
         $index = $sql2->fetch();
         $day = $this->getDayName($index[0]);
 
-        $sql1 = $this->dbHolder->prepare("SELECT sc.day, sc.timeStart, sc.timeEnd, sc.room, sc.courseCode FROM schedule sc, sections se, studentSchedule ss, config c
+        $sql1 = $this->dbHolder->prepare("SELECT sc.day, sc.timeStart, sc.timeEnd, sc.room, sc.courseCode
+                                            FROM schedule sc, sections se, studentSchedule ss, config c
                                             WHERE se.sectionId = sc.sectionId
+                                            AND sc.sectionId = ss.sectionId
                                             AND sc.courseCode = ss.courseCode
                                             AND se.sy = c.sy
                                             AND se.semester = c.sem
@@ -203,7 +268,7 @@ class Student extends DatabaseConnector {
 
         if($stud = $sql->fetch()) {
             $data = array("firstname"=>$stud[0], "middlename"=>$stud[1], "lastname"=>$stud[2],
-                "progCode"=>$stud[3],"program"=>$stud[4], "year"=>$stud[5], "sem"=>$stud[6],
+                "progCode"=>$stud[3],"program"=>$stud[4], "year"=>$this->getOrder($stud[5])." Year", "sem"=>$this->getOrder($stud[6])." ".$config[1],
                 "sched"=>$schedData, "day"=>$day, "courses"=>$coursesData, "units"=>$units);
             echo json_encode($data);
 
@@ -270,6 +335,7 @@ class Student extends DatabaseConnector {
     function displayPreregistrationData() {
         $this->openConnection();
 
+        //to check if student is preregistered already
         $sql5 = $this->dbHolder->prepare("SELECT c.courseCode, c.description, p.sectionId FROM courses c, preregistration p
                                             WHERE c.courseCode = p.courseCode
                                             AND p.studentId = ?;");
@@ -307,7 +373,7 @@ class Student extends DatabaseConnector {
                       </tr>";
         }
 
-        if($data != "") {
+        if($data != "") { // preregistered already
             $data = "<h2>Pre-registered Courses</h2>
                      <table class='table table-striped table-hover'>
                         <tr class='alert alert-info'>
@@ -317,7 +383,7 @@ class Student extends DatabaseConnector {
                         ".$data."
                      </table>";
             echo json_encode(array("done"=>"true", "preregistration"=>$data));
-        } else {
+        } else { // meaning, student is not preregistered yet
             $sql = $this->dbHolder->query("SELECT * FROM config;");
             $config = $sql->fetch();
 
@@ -340,9 +406,16 @@ class Student extends DatabaseConnector {
                     }
 
                     // select courses for next sem
-                    $sql2 = $this->dbHolder->prepare("SELECT DISTINCT c.courseCode, c.description, c.units, c.labUnits, t.year, t.semester FROM courses c, ".$table." t, studentgrades sg
+                    /*$sql2 = $this->dbHolder->prepare("SELECT DISTINCT c.courseCode, c.description, c.units, c.labUnits, t.year, t.semester FROM courses c, ".$table." t, studentgrades sg
                                                     WHERE c.courseCode = t.courseCode
                                                     AND sg.fGrade != 'D' AND sg.fGrade <= 3 AND sg.fGrade > 0
+                                                    AND progCode = ?
+                                                    AND sg.studentId = ?
+                                                    ORDER BY t.year, t.semester;");*/
+                    $sql2 = $this->dbHolder->prepare("SELECT DISTINCT c.courseCode, c.description, c.units, c.labUnits, t.year, t.semester FROM courses c, ".$table." t, studentgrades sg
+                                                    WHERE c.courseCode = t.courseCode
+                                                    AND t.courseCode = sg.courseCode
+                                                    AND (sg.fGrade = 0 OR sg.fGrade > 3 OR sg.fGrade = 'D')
                                                     AND progCode = ?
                                                     AND sg.studentId = ?
                                                     ORDER BY t.year, t.semester;");
@@ -518,6 +591,73 @@ class Student extends DatabaseConnector {
             if($message == "") $message = "You successfully assigned schedule to ".$courseCode.".";
             echo json_encode(array("conflict"=>"false", "message"=>$message));
         }
+
+        $this->closeConnection();
+    }
+
+    function displayClassSchedule() {
+        $this->openConnection();
+
+        $sql1 = $this->dbHolder->prepare("SELECT DISTINCT sc.day
+                                            FROM schedule sc, sections se, studentSchedule ss, config c, days d
+                                            WHERE se.sectionId = sc.sectionId
+                                            AND sc.sectionId = ss.sectionId
+                                            AND se.sy = c.sy
+                                            AND se.year = c.year
+                                            AND se.semester = c.sem
+                                            AND sc.courseCode = ss.courseCode
+                                            AND sc.day = d.day
+                                            AND ss.studentId = ?
+                                            ORDER BY d.id;");
+        $sql1->execute(array($_SESSION["studentId"]));
+
+        $data= "";
+        while($day = $sql1->fetch()) {
+            $data .= "<tr class='alert alert-info'><th colspan='3'>".$day[0]."</th></tr>";
+            $sql = $this->dbHolder->prepare("SELECT sc.timeStart, sc.timeEnd, sc.room, sc.courseCode
+                                            FROM schedule sc, sections se, studentSchedule ss, config c, days d
+                                            WHERE se.sectionId = sc.sectionId
+                                            AND sc.sectionId = ss.sectionId
+                                            AND se.sy = c.sy
+                                            AND se.year = c.year
+                                            AND se.semester = c.sem
+                                            AND sc.courseCode = ss.courseCode
+                                            AND sc.day = d.day
+                                            and d.day = ?
+                                            AND ss.studentId = ?
+                                            ORDER BY sc.timeStart, sc.timeEnd;");
+            $sql->execute(array($day[0], $_SESSION["studentId"]));
+
+            while($sched = $sql->fetch()) {
+                $data .= "<tr>
+                            <th>".$sched[3]."</th>
+                            <th>".$sched[0]." - ".$sched[1]."</th>
+                            <th>".$sched[2]."</th>
+                          </tr>";
+            }
+        }
+
+        if($data == "") $data = "<tr><td>No schedule yet;</td></tr>";
+        else $data = "<table class='table table-responsive table-striped'>
+                        <tr class='alert alert-danger'>
+                            <th>Course</th>
+                            <th>Time</th>
+                            <th>Room</th>
+                        </tr>
+                        ".$data."
+                      </table>";
+        echo $data;
+
+        $this->closeConnection();
+    }
+
+    function displayPhotofilePhoto() {
+        $this->openConnection();
+
+        $sql = $this->dbHolder->prepare("SELECT photoName FROM studentPhoto WHERE studentId = ?;");
+        $sql->execute(array($_SESSION["studentId"]));
+        $photo = $sql->fetch();
+        echo $photo[0];
 
         $this->closeConnection();
     }

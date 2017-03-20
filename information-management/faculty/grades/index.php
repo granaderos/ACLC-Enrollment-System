@@ -12,13 +12,14 @@ else if($_SESSION["type"] != "instructor")
     <head>
         <title>Encode Grades | <?php echo $_SESSION["classSection"]."-".$_SESSION["classCourse"] ?></title>
 
-        <script src="../../js/jquery-1.9.1.min.js" type="text/javascript"></script>
-        <script src="../../js/jquery-ui-1.10.2.min.js" type="text/javascript"></script>
+        <script src="../../js/jquery-1.12.4.min.js" type="text/javascript"></script>
+        <script src="../../js/jquery-ui-1.12.1.min.js" type="text/javascript"></script>
         <script src="../../js/bootstrap.min.js" type="text/javascript"></script>
 
         <link href="../../css/bootstrap.min.css" rel="stylesheet" type="text/css" />
         <link href="../../css/bootstrap-theme.min.css" rel="stylesheet" type="text/css" />
         <link href="../../css/jquery-ui.min.css" rel="stylesheet" type="text/css" />
+        <link rel="icon" type="image/png" href="../../../aclc.png" />
 
         <link href="../../faculty.css" type="text/css" rel="stylesheet" />
         <link rel="stylesheet" type="text/css" href="../../css/navs.css" />
@@ -42,10 +43,7 @@ else if($_SESSION["type"] != "instructor")
         </div>
         <div id="navDiv">
             <div id="info">
-                <center>
-                    Welcome<br>
-                    (Instructor)
-                </center>
+                <img src="../../files/systemPhotos/aclclogo.png" width="100%" height="100%" style="border-radius: 7px 7px 0 0;" class="image-responsive"><br />
             </div>
             <div id="nav">
                 <ul>

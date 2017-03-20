@@ -20,6 +20,16 @@
 
         <div id="studMainContainerDiv" class="mainContainer container-fluid"></div>
 
+        <div id="studClassScheduleContainerDiv" class="hidden">
+            <h2>Class Schedule</h2>
+            <div id="studSlassScheduleData"></div>
+        </div>
+
+        <div id="accountBalanceContainerDiv" class="hidden">
+            <h2>Account Balance</h2>
+            <div id="accountBalanceDataContainer"></div>
+        </div>
+
         <div id="preregistrationContainerDiv" class="hidden container-fluid" style="margin-left: 260px; margin-top: 20px;">
             <h2>Pre-registration of Courses</h2>
 
@@ -53,7 +63,8 @@
         </div>
 
         <div id="divAccountSettingContainer" class="container-fluid hidden">
-            <p>
+            <p style="margin-top: 10px;">
+                <h2>Account Settings</h2>
                 <a onclick="editInfoAll();"><span class="glyphicon glyphicon-edit"></span> &nbsp;Edit Information</a>
             </p>
             <form class="form-group" onsubmit="saveStudentInfo(); return false;">
@@ -64,7 +75,7 @@
                 <input class="form-control" id="mName" disabled />
                 <label>Last Name:</label>
                 <input class="form-control" id="lName" disabled />
-                <label>Dender:</label>
+                <label>Gender:</label>
                 <select class="form-control" id="gender" disabled>
                     <option>Female</option>
                     <option>Male</option>
@@ -135,7 +146,9 @@
                 <tr>
                     <td style="">
                         <div div="profileContainer">
-                            <img src="../files/profiles/mj.png" style="width: 180px; height: 200px;" class="image-responsive" />
+                            <span id="studProfilePhoto">
+                                <img src="../files/profiles/mj.png" style="width: 180px; height: 200px;" class="image-responsive" />
+                            </span>
                             <p>
                                 <label>Name: </label> <span id="profName"></span> <br />
                                 <label>Program: </label> <span id="profProgram"></span> <br />
@@ -146,7 +159,7 @@
                         </div>
                     </td>
                     <td>
-                        <div id="studTodaySched">
+                        <div id="studTodaySched" class="alert alert-danger">
                             <h2>My Class Schedule Today</h2>
 <!--                            <label class="alert alert-info" id="sctudSchedDay"></label>-->
                             <div id="studTodaySchedData"></div>

@@ -1,14 +1,26 @@
 #left-div{
 
+    border-radius: 10px;
+    background-color: #ffffff;
+    margin-top: 180px;
+    margin-left: 200px;
+    width: 70%;
+}
+
+#left-div img {
+    height: 50%;
+    width: 100%;
+    margin: auto;
+}
+
+#loginForm{
     border: 2px solid #000000;
     border-radius: 10px;
     width: 450px;
-    height: 500px;
     background-color: #ffffff;
-    margin-top: 70px;
-    margin-left: 40px;
+    height: 420px;
     padding: 30px;
-    position: absolute;
+    margin-left: 200px;
 
 }
 p{

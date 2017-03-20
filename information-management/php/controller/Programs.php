@@ -250,11 +250,9 @@ class Programs extends DatabaseConnector {
         $sql = $this->dbHolder->prepare("SELECT * FROM courses WHERE courseCode = ?;");
         $sql->execute(array($code));
 
-
-
         if($courseData = $sql->fetch()) {
-            $sql3 = $this->dbHolder->prepare("SELECT * FROM tempCoursesToProgram WHERE courseCode = ?;");
-            $sql3->execute(array($code));
+            $sql3 = $this->dbHolder->prepare("SELECT * FROM tempCoursesToProgram WHERE courseCode = ? AND progCode = ?;");
+            $sql3->execute(array($code, $_SESSION["progCode"]));
 
             if($sql3->fetch()) {
                 $message = $code." is already on the list.";
@@ -287,7 +285,7 @@ class Programs extends DatabaseConnector {
         $this->closeConnection();
     }
 
-    function saveCourses($progSem) {
+    function saveCourses($progSem, $curHTML) {
         $this->openConnection();
         $table = "coursestoprogramstrimestral";
         if($progSem == "Semester") $table = "coursestoprogramssemestral";
@@ -346,7 +344,8 @@ class Programs extends DatabaseConnector {
         $sql2->execute();
 
         $this->closeConnection();
-        echo $data;
+//        echo $data;
+        $_SESSION["progCourses"] = $curHTML.$data;
     }
 
     function displayProgramsTrimestral($curriculum) {
@@ -477,7 +476,7 @@ class Programs extends DatabaseConnector {
         while($content = $sql->fetch()) {
             $data .= "<tr id='tr".$content[0]."'>
                             <td>
-                                <a style='color: black;' onclick=\"displaySectionDiv('".$content[0]."', '".$content[1]."')\" class='makeTooltip' title='click to display courses' id='prog".$content[0]."'>".$content[0]." - ".$content[1]."</a>
+                                <a style='' onclick=\"displaySectionDiv('".$content[0]."', '".$content[1]."')\" class='makeTooltip' title='click to display courses' id='prog".$content[0]."'>".$content[0]." - ".$content[1]."</a>
                             </td>
                       </tr>";
         }
@@ -486,5 +485,111 @@ class Programs extends DatabaseConnector {
             $data =  "<tr><td><p class='alert alert-danger'>No programs added yet;</p></td></tr>";
         }
         echo "<table class='table table-responsive table-striped'>".$data."</table>";
+    }
+
+    function searchCourse($course) {
+        $this->openConnection();
+
+        $sql = $this->dbHolder->prepare("SELECT * FROM courses WHERE courseCode = ?;");
+        $sql->execute(array($course));
+
+        if($c = $sql->fetch()) {
+            $sql1 = $this->dbHolder->prepare("SELECT preReqCourse FROM prerequisites WHERE courseCode = ?;");
+            $sql1->execute(array($course));
+
+            $preq = "";
+            while($p = $sql1->fetch()) {
+                $preq .= ($p[0]."<br />");
+            }
+            if($preq == "") $preq = "none";
+            echo json_encode(array("exist"=>"true", "desc"=>$c[1], "units"=>$c[2], "labUnits"=>$c[3], "preq"=>$preq));
+        } else {
+            echo json_encode(array("exist"=>"false"));
+        }
+        $this->closeConnection();
+    }
+
+    function displayPrevAddedCourses($progCur, $progSem, $progYear) {
+        $this->openConnection();
+        $progCode = $_SESSION["progCode"];
+        $table = "coursestoprogramstrimestral";
+        if($progSem == "Semester") $table = "coursestoprogramssemestral";
+
+        $data = "";
+
+        $sql = $this->dbHolder->prepare("SELECT * FROM programs WHERE progCode = ?;");
+        $sql->execute(array($progCode));
+
+        $program = $sql->fetch();
+        $_SESSION["program"] = $program[1];
+
+        //$data .= "<h4 class='alert alert-info'>" . $program[0] . " - " . $program[1] . "</h4>";
+        $sql1 = $this->dbHolder->prepare("SELECT DISTINCT cp.year FROM ".$table." cp, curriculum cu
+                                              WHERE cu.curriculum = cp.curriculumYear
+                                              AND cp.progCode = ?
+                                              AND cp.curriculumYear = ?;");
+        $sql1->execute(array($program[0], $progCur));
+        $data .= "<table class='table table-bordered table-hover'>";
+        $progData = "";
+        while ($year = $sql1->fetch()) {
+            $sql2 = $this->dbHolder->prepare("SELECT DISTINCT cp.semester FROM ".$table." cp, curriculum cu
+                                                  WHERE cu.curriculum = cp.curriculumYear
+                                                  AND cp.progCode = ?
+                                                  AND cp.curriculumYear = ?;");
+            $sql2->execute(array($program[0], $progCur));
+            while ($semester = $sql2->fetch()) {
+                $progData .= "<tr class='alert alert-danger'><th colspan='4'>" . $this->getWordYear($year[0]) . " Year, " . $this->getWordYear($semester[0]) . " Semester</th></tr>";
+                $progData .= "<tr>
+                                <th>Course Code</th>
+                                <th>Description</th>
+                                <th>Unit</th>
+                                <th>Pre-requisites</th>
+                              </tr>";
+                $sql3 = $this->dbHolder->prepare("SELECT c.courseCode, c.description, c.units
+                                                      FROM courses c, ".$table." cp, curriculum cu
+                                                      WHERE c.courseCode = cp.courseCode
+                                                      AND cu.curriculum = cp.curriculumYear
+                                                      AND cp.progCode = ?
+                                                      AND cp.semester = ?
+                                                      AND cp.year = ?
+                                                      AND cp.curriculumYear = ?;");
+                $sql3->execute(array($program[0], $semester[0], $year[0], $progCur));
+                $coursesData = "";
+                while ($courses = $sql3->fetch()) {
+
+                    $sql4 = $this->dbHolder->prepare("SELECT pre.* FROM prerequisites pre, courses c
+                                                WHERE c.courseCode = pre.courseCode
+                                                AND c.courseCode = ?;");
+                    $sql4->execute(array($courses[0]));
+
+                    $preqData = "";
+                    $c = 0;
+                    while($preqsCon = $sql4->fetch()) {
+                        if($c > 0) $preqData .= ", ";
+                        $preqData .= $preqsCon[0];
+                        $c++;
+                    }
+                    if($preqData == "") $preqData = "none";
+
+                    $coursesData .=
+                        "<tr>
+                            <td>" . $courses[0] . "</td>
+                            <td>" . $courses[1] . "</td>
+                            <td>" . $courses[2] . "</td>
+                            <td>".$preqData."</td>
+                        </tr>";
+                }
+                $progData .= $coursesData;
+            }
+        }
+        if($progData == "") {
+            //$data .= "No courses added to this program (".$progCode.") yet for ".$progSem." and ".$progCur." curriculum; click <a href='add-courses'>HERE</a> to set courses.";
+            //$_SESSION["progCode"] = $progCode;
+            //$_SESSION["progDescription"] = $program[1];
+        } else $data .= $progData;
+        $data .= "</table>";
+        echo $data;
+
+        $this->closeConnection();
     }
 } 

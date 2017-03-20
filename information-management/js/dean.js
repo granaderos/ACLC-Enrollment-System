@@ -7,7 +7,7 @@
  */
 
 var progCode = "", program = "", curSectionId = "", curCourse = "";
-var curYear = 0, curSectionId = 0;
+var curYear = 0, curSectionId = 0, curType = "";
 $(document).ready(function() {
     getYear();
     displayProgramsForDean();
@@ -15,6 +15,128 @@ $(document).ready(function() {
 
     $(".makeTooltip").tooltip();
 });
+
+function toggleGradeEncoding() {
+    displayEncodingStatus();
+    $("#divDeanMainContainer").html($("#garadesEncodingSettingsDiv").html());
+}
+
+function displaySectionPopulation() {
+    setInterval(function(){
+        displaySections();
+    },1000)
+}
+
+function toggleEncodingStatus(period, toUpdate) {
+    var okay = confirm("Are you sure to update encoding status?");
+    if(okay) {
+        $.ajax({
+            type: "POST",
+            url: "../php/dean/updateStatusEncoding.php",
+            data: {period: period, toUpdate: toUpdate},
+            success: function(data) {
+                displayEncodingStatus();
+                alert("Status successfully updated;" + data)
+            },
+            error: function(data) {
+                alert("in upadgin eeeeeeeeeeeeew wi Melv is " + JSON.stringify(data));
+            }
+        });
+    } else alert("Updating status cancelled;");
+}
+
+function displayEncodingStatus() {
+    $.ajax({
+        type: "POST",
+        url: "../php/dean/displayGradesEncodingStatus.php",
+        success: function(data) {
+            $("#gradesEncodingSettingsData").html(data);
+        },
+        error: function(data) {
+            alert("Error in displaying encoding status Mj! :( " + JSON.stringify(data));
+        }
+    });
+}
+
+function toggleSearchSchedule() {
+    $("#divDeanMainContainer").html($("#searchScheduleDiv").html());
+}
+
+function getNameSched() {
+    var keyWord = $("#deanToGetSched").val();
+    var toSearch = $("#schedToSearch").val();
+
+    if(keyWord.trim().length > 1) {
+        $.ajax({
+            type: "POST",
+            url: "../php/dean/getNameSched.php",
+            data: {keyWord: keyWord, toSearch: toSearch},
+            success: function(data) {
+                $("#schedResultNamesContainer").html(data);
+            },
+            error: function(data) {
+                alert("Mj, error in getting name sched " + JSON.stringify(data));
+            }
+        });
+    }
+}
+
+function viewScheduleOfSI(type, id) {
+    $.ajax({
+       type: "POST",
+        url:   "../php/dean/viewScheduleOfSI.php",
+        data: {type: type, id: id},
+        success: function() {
+            window.open("search-schedule", "Class Schedule", "width=1000,height=800");
+        },
+        error: function(data) {
+            alert("error in viewScheduleOfSI Mj " + JSON.stringify(data));
+        }
+    });
+}
+
+function toggleCurriculum() {
+    displayCurriculumData();
+    $("#divDeanMainContainer").html($("#curriculumSettingsContainerDiv").html());
+}
+
+function displayCurriculumData() {
+    $.ajax({
+        type: "POST",
+        url: "../php/dean/displayCurriculumData.php",
+        success: function(data) {
+            var obj = JSON.parse(data);
+            $("#curriculumSettingsData").html(obj.curSet);
+            curType = obj.curType;
+        },
+        error: function(data) {
+            alert("Mj :( error in displaying curriculum data " + JSON.stringify(data));
+        }
+    });
+}
+
+function promptChangeCurType(curType) {
+    var toChange = "Semestral";
+    if(curType == "Semestral")
+        toChange = "Trimestral";
+    var okay = confirm("Sure to change the curriculum type to " + toChange + "?");
+    if(okay) {
+        $.ajax({
+            type: "POST",
+            url: "../php/dean/changeCurriculumType.php",
+            data: {toChange: toChange},
+            success: function(data) {
+                displayCurriculumData();
+                alert("Curriculum type was changed!");
+            },
+            error: function(data) {
+                alert("Mj error in chanign cur type " + JSON.stringify(data));
+            }
+        });
+    } else {
+        alert("Changing of curriculum cancelled;");
+    }
+}
 
 function togglePreregistration() {
     displayPreregStatus();
@@ -26,17 +148,22 @@ function toggleApprovePreregistration() {
 }
 
 function approveStudentPrereg() {
-    $.ajax({
-        type: "POST",
-        url: "../php/dean/approveStudentPrereg.php",
-        success: function(data) {
-            alert("Preregistration successfully approved!");
-            getFilteredPreregistrations();
-        },
-        error: function(data) {
-            alert("Mj, error in approveStudentPrereg " + JSON.stringify(data));
-        }
-    })
+    var okay = confirm("Are you sure to approve this pre-registration?");
+    if(okay) {
+        $.ajax({
+            type: "POST",
+            url: "../php/dean/approveStudentPrereg.php",
+            success: function(data) {
+                alert("Pre-registration successfully approved! " + data);
+                getFilteredPreregistrations();
+            },
+            error: function(data) {
+                alert("Mj, error in approveStudentPrereg " + JSON.stringify(data));
+            }
+        });
+    } else {
+
+    }
 }
 
 function showStudentPreregistration(studentId) {
@@ -393,8 +520,13 @@ function addTempSched() {
         url: "../php/dean/addSchedule.php",
         data: {sectionId: curSectionId, course: curCourse, day: day, startTime: startTime, endTime: endTime, room: room},
         success: function(data) {
+            var content = $("#tableTempSched").html();
+            if(content == "<tr><td colspan=\"4\">No schedule yet;</td></tr>") $("#tableTempSched").html("");
+
+            /*if(sCounter == 0) $("#tableTempSched").html("");
+            sCounter++;*/
             if(data == "exist") alert("Schedule already exist!");
-            else if(data == " conflict") alert("Schedule already conflicts with other schedule!");
+            else if(data == "conflict") alert("Schedule already conflicts with other schedule!");
             else $("#tableTempSched").append(data);
         },
         error: function(data) {

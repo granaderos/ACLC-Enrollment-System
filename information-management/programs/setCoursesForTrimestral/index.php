@@ -5,8 +5,8 @@
     <link href="../../css/jquery-ui.min.css" rel="stylesheet" type="text/css" />
     <link href="../../css/programs.css" rel="stylesheet" type="text/css" />
 
-    <script src="../../js/jquery-1.9.1.min.js" type="text/javascript"></script>
-    <script src="../../js/jquery-ui-1.10.2.min.js" type="text/javascript"></script>
+    <script src="../../js/jquery-1.12.4.min.js" type="text/javascript"></script>
+    <script src="../../js/jquery-ui-1.12.1.min.js" type="text/javascript"></script>
     <script src="../../js/bootstrap.min.js" type="text/javascript"></script>
     <script src="../../js/programs.js" type="text/javascript"></script>
 </hea>

@@ -12,12 +12,12 @@ class Admin extends DatabaseConnector {
 
     function addStuff($firstName, $middleName, $lastName, $username, $type) {
         $this->openConnection();
-        $password = md5(substr($firstName, 0, 1).substr($middleName, 1, 1));
-        if(strlen($password) > 8) $password = substr($password, 0, 8);
-        $sql = $this->dbHolder->prepare("INSERT INTO staff VALUES (null, ?, ?, ?, ?, ?, ?, 0);");
-        $sql->execute(array($firstName, $middleName, $lastName, $username, $password, $type));
+        //$password = md5(substr($firstName, 0, 1).substr($middleName, 1, 1));
+        //if(strlen($password) > 8) $password = substr($password, 0, 8);
+        $sql = $this->dbHolder->prepare("INSERT INTO staff VALUES (null, ?, ?, ?, ?, password(?), ?, 0);");
+        $sql->execute(array($firstName, $middleName, $lastName, $username, $username, $type));
 
-        echo $password;
+        //echo $password;
 
         $this->closeConnection();
     }
@@ -25,7 +25,7 @@ class Admin extends DatabaseConnector {
     function loginStaff($username, $password) {
         $this->openConnection();
 
-        $sql = $this->dbHolder->prepare("SELECT * FROM staff WHERE username = ? AND password = ?;");
+        $sql = $this->dbHolder->prepare("SELECT * FROM staff WHERE username = ? AND password = password(?);");
         $sql->execute(array($username, $password));
 
         $this->closeConnection();

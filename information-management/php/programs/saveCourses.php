@@ -10,5 +10,5 @@
 include_once "../controller/Programs.php";
 
 $obj = new Programs();
-$obj->saveCourses($_POST["progSem"]);
+$obj->saveCourses($_POST["progSem"], $_POST["curHTML"]);
 //$obj->addTempCourseToProgram($_POST["code"], $_POST["description"], $_POST["unit"], $_POST["progCur"], $_POST["curYear"], $_POST["curSem"]);

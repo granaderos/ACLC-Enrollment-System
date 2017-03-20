@@ -17,7 +17,7 @@ class Requirements extends  DatabaseConnector {
             $data .=
                 "<tr>
                     <td><a onclick='deleteRequirement(".$content[0].")' class='glyphicon glyphicon-remove' onmouseover='$(this).tooltip();' title='Click to delete ".$content[1]." from the list.'></a></td>
-                    <td ondblclick='editRequirement(".$content[0].")' id='req".$content[0]."' title='Double click to edit this requirement.'>".$content[1]."</td>
+                    <td ondblclick='editRequirement(".$content[0].")' id='req".$content[0]."' title='Double click to edit this requirements.'>".$content[1]."</td>
                     <td ondblclick='editRequirementFor(".$content[0].")' id='reqFor".$content[0]."' title='Double click to edit this.'>".$content[2]."</td>
                 </tr>";
         }

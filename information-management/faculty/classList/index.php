@@ -5,7 +5,6 @@ if(!isset($_SESSION["type"]))
     header("Location: ../../login");
 else if($_SESSION["type"] != "instructor")
     header("Location: ../../login");
-
 ?>
 
 <html>

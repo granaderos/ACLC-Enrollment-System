@@ -9,5 +9,5 @@
 session_start();
 
 $_SESSION["progCode"] = $_POST["code"];
-$_SESSION["program"] = $_POST["program"];
+$_SESSION["progDescription"] = $_POST["program"];
 

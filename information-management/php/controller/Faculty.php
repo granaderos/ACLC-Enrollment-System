@@ -285,10 +285,27 @@ class Faculty extends DatabaseConnector {
         }
 
         if($data == "") $data = "<h4>Something went wrong;</h4>";
-        else $data = "<div class='container-fluid'>
+        else {
+            $sql1 = $this->dbHolder->query("SELECT pEncodingStatus, mEncodingStatus, pfEncodingStatus, fEncodingStatus FROM config;");
+            $config = $sql1->fetch();
+
+            $pBut = "<button onclick='editPrelimGrade()' class='btn btn-xs btn-primary'><span class='glyphicon glyphicon-edit'></span>edit</button>";
+            if($config[0] == 0) $pBut = "<button class='btn btn-xs btn-primary' disabled><span class='glyphicon glyphicon-edit'></span>edit</button>";
+            $mBut = "<button onclick='editMidtermGrade()' class='btn btn-xs btn-primary'><span class='glyphicon glyphicon-edit'></span>edit</button>";
+            if($config[1] == 0) $mBut = "<button class='btn btn-xs btn-primary' disabled><span class='glyphicon glyphicon-edit'></span>edit</button>";
+            $pfBut = "<button onclick='editPreFinalGrade()' class='btn btn-xs btn-primary'><span class='glyphicon glyphicon-edit'></span>edit</button>";
+            if($config[2] == 0) $pfBut = "<button class='btn btn-xs btn-primary' disabled><span class='glyphicon glyphicon-edit'></span>edit</button>";
+            $fBut = "<button onclick='editFinalGrade()' class='btn btn-xs btn-primary'><span class='glyphicon glyphicon-edit'></span>edit</button>";
+            if($config[3] == 0) $fBut = "<button class='btn btn-xs btn-primary' disabled><span class='glyphicon glyphicon-edit'></span>edit</button>";
+
+            $data = "<div class='container-fluid'>
                         <div class='text-center'>
-                            <h2>Student Grades</h2>
+                            <h2>
+                                Student Grades
+                                <button class='btn btn-warning btn-lg pull-right' onclick=\"getPrintableGrades('".$_SESSION["classSection"]."', '".$_SESSION["classCourse"]."', ".$_SESSION["staffId"].")\"><span class='glyphicon glyphicon-print'></span>&nbsp;print grades</button>
+                            </h2>
                         </div>
+                        <br />
                         <table class='table table-bordered table-responsive'>
                             <tr>
                                 <td>Section: <label style='text-decoration: underline;'>".$sectionCode."</label></td>
@@ -302,26 +319,25 @@ class Faculty extends DatabaseConnector {
                                 <td colspan='2'>Faculty: <label style='text-decoration: underline'>".$_SESSION['lastname'].", ".$_SESSION['firstname']." ".$_SESSION['middlename']."</label></td>
                             </tr>
                         </table>
-
                         <table class='table table-responsive table-bordered'>
                         <tr class='alert alert-info'>
                             <th></th>
                             <th>Student ID</th>
                             <th>Full Name</th>
                             <th>Prelim &nbsp;
-                                <button onclick='editPrelimGrade()' class='btn btn-xs btn-primary'><span class='glyphicon glyphicon-edit'></span>edit</button>
+                                ".$pBut."
                                 <!-- <button class='btn btn-xs btn-primary disabled'><span class='glyphicon glyphicon-save'></span>save</button> -->
                             </th>
                             <th>Midterm &nbsp;
-                                <button onclick='editMidtermGrade()' class='btn btn-xs btn-primary'><span class='glyphicon glyphicon-edit'></span>edit</button>
+                                ".$mBut."
                                 <!-- <button class='btn btn-xs btn-primary disabled'><span class='glyphicon glyphicon-save'></span>save</button> -->
                             </th>
                             <th>Pre-Final &nbsp;
-                                <button onclick='editPreFinalGrade()' class='btn btn-xs btn-primary'><span class='glyphicon glyphicon-edit'></span>edit</button>
+                                ".$pfBut."
                                 <!-- <button class='btn btn-xs btn-primary disabled'><span class='glyphicon glyphicon-save'></span>save</button> -->
                             </th>
                             <th>Final &nbsp;
-                                <button onclick='editFinalGrade()' class='btn btn-xs btn-primary'><span class='glyphicon glyphicon-edit'></span>edit</button>
+                                ".$fBut."
                                 <!-- <button class='btn btn-xs btn-primary disabled'><span class='glyphicon glyphicon-save'></span>save</button> -->
                             </th>
                         </tr>
@@ -331,24 +347,25 @@ class Faculty extends DatabaseConnector {
                             <th>Student ID</th>
                             <th>Full Name</th>
                             <th>Prelim &nbsp;
-                                <button onclick='editPrelimGrade()' class='btn btn-xs btn-primary'><span class='glyphicon glyphicon-edit'></span>edit</button>
+                                ".$pBut."
                                 <!-- <button class='btn btn-xs btn-primary disabled'><span class='glyphicon glyphicon-save'></span>save</button> -->
                             </th>
                             <th>Midterm &nbsp;
-                                <button onclick='editMidtermGrade()' class='btn btn-xs btn-primary'><span class='glyphicon glyphicon-edit'></span>edit</button>
+                                ".$mBut."
                                 <!-- <button class='btn btn-xs btn-primary disabled'><span class='glyphicon glyphicon-save'></span>save</button> -->
                             </th>
                             <th>Pre-Final &nbsp;
-                                <button onclick='editPreFinalGrade()' class='btn btn-xs btn-primary'><span class='glyphicon glyphicon-edit'></span>edit</button>
+                                ".$pfBut."
                                 <!-- <button class='btn btn-xs btn-primary disabled'><span class='glyphicon glyphicon-save'></span>save</button> -->
                             </th>
                             <th>Final &nbsp;
-                                <button onclick='editFinalGrade()' class='btn btn-xs btn-primary'><span class='glyphicon glyphicon-edit'></span>edit</button>
+                                ".$fBut."
                                 <!-- <button class='btn btn-xs btn-primary disabled'><span class='glyphicon glyphicon-save'></span>save</button> -->
                             </th>
                         </tr>
                       </table>
                     </div>";
+            }
         echo $data;
 
         $this->closeConnection();
@@ -416,5 +433,94 @@ class Faculty extends DatabaseConnector {
         $sql1->execute(array(htmlentities($grade), $studentId, $courseCode, $config[6], $config[5]));
         echo "grade=".$grade."\nstudentId=".$studentId."\ncourse=".$courseCode."\nsy=".$config[6]."\nsem=".$config[5];
         $this->closeConnection();
+    }
+
+    function getPrintableGrades($sectionId, $courseCode, $staffId) {
+        $this->openConnection();
+
+        $sql = $this->dbHolder->prepare("SELECT DISTINCT st.studentId, st.lastname, st.firstname, st.middlename,
+                                          se.sectionCode, c.sy, c.year, c.sem, sg.pGrade, sg.mGrade, sg.pfGrade, sg.fGrade
+                                          FROM students st, studentSchedule ss, schedule sc, sections se, professorSchedule ps, config c, studentgrades sg
+                                            WHERE st.studentId = ss.studentId
+                                            AND se.sectionId = ss.sectionId
+                                            AND sc.sectionId = ss.sectionId
+                                            AND ss.sectionId = ps.sectionId
+                                            AND se.sy = c.sy
+                                            AND se.year = c.year
+                                            AND se.semester = c.sem
+                                            AND ss.courseCode = ps.courseCode
+                                            AND ps.courseCode = sg.courseCode
+                                            AND st.studentId = sg.studentId
+                                            AND se.sectionId = ?
+                                            AND sc.courseCode  = ?
+                                            AND ps.profId = ?
+                                            ORDER BY st.lastname, st.firstname, st.middlename;");
+        $sql->execute(array($sectionId, $courseCode, $staffId));
+
+        $data = ""; $counter = 1;
+        $sectionCode = ""; $year = ""; $sem = ""; $sy = "";
+        while($stud = $sql->fetch()) {
+            $data .= "<tr>
+                            <td>".$counter."</td>
+                            <th>".$stud[0]."</th>
+                            <th>".$stud[1].", ".$stud[2]." ".$stud[3]."</th>
+                            <th>$stud[8]</th>
+                            <th>$stud[9]</th>
+                            <th>$stud[10]</th>
+                            <th>$stud[11]</th>
+
+                      </tr>";
+            if($counter == 1) {
+                $sectionCode = $stud[4];
+                $sy = $stud[5];
+                $year = $stud[6];
+                $sem = $stud[7];
+            }
+            $counter++;
+        }
+
+        if($data == "") $data = "<h4>Something went wrong;</h4>";
+        else {
+            $data = "<div class='container-fluid'>
+                        <div class='text-center'>
+                            <h2>
+                                Student Grades
+                            </h2>
+                        </div>
+                        <br />
+                        <table class='table table-bordered table-responsive'>
+                            <tr>
+                                <td>Section: <label style='text-decoration: underline;'>".$sectionCode."</label></td>
+                                <td>Year: <label style='text-decoration: underline'>".$this->getOrder($year)." Year</label></td>
+                            </tr>
+                            <tr>
+                                <td>Course: <label style='text-decoration: underline'>".$_SESSION["classCourse"]."</label></td>
+                                <td>Semester: <label style='text-decoration: underline'>".$this->getOrder($sem)." Sem</label></td>
+                            </tr>
+                            <tr>
+                                <td colspan='2'>Faculty: <label style='text-decoration: underline'>".$_SESSION['lastname'].", ".$_SESSION['firstname']." ".$_SESSION['middlename']."</label></td>
+                            </tr>
+                        </table>
+                        <table class='table table-responsive table-bordered'>
+                        <tr class='alert alert-info'>
+                            <th></th>
+                            <th>Student ID</th>
+                            <th>Full Name</th>
+                            <th>Prelim &nbsp;</th>
+                            <th>Midterm &nbsp;</th>
+                            <th>Pre-Final &nbsp;</th>
+                            <th>Final &nbsp;</th>
+                        </tr>
+                        ".$data."
+                      </table>
+                    </div>";
+            $_SESSION["classGrades"] = $data;
+        }
+        $this->closeConnection();
+    }
+
+    function getOrder($num) {
+        $order = array("1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th");
+        return $order[$num-1];
     }
 }

@@ -12,12 +12,12 @@
     <link href="../../../css/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
     <link href="../../../css/programs.css" rel="stylesheet" type="text/css"/>
 
-    <script src="../../../js/jquery-1.9.1.min.js" type="text/javascript"></script>
-    <script src="../../../js/jquery-ui-1.10.2.min.js" type="text/javascript"></script>
+    <script src="../../../js/jquery-1.12.4.min.js" type="text/javascript"></script>
+    <script src="../../../js/jquery-ui-1.12.1.min.js" type="text/javascript"></script>
     <script src="../../../js/bootstrap.min.js" type="text/javascript"></script>
     <script src="../../../js/courses.js" type="text/javascript"></script>
 </head>
-<body>
+<body style="height: 2000px !important; overflow-y: scroll;">
 <link rel="stylesheet" type="text/css" href="../../../css/header.css" />
 <div class="header">
     <?php
@@ -90,7 +90,7 @@
         </div>
     </div>
 
-    <div id="divAddCourses" style="">
+    <div id="divAddCourses" style="margin-top: 150px; !important">
         <h4 class="alert alert-info" id="h4NewPrograms">Set-up Courses For <?php echo $_SESSION["progDescription"]; ?></h4>
         <p>
             <em>[Program Details]</em>
@@ -113,7 +113,7 @@
             </table>
         </p>
 
-        <table style="" class="table table-striped" id="tblAddedCourses"></table>
+        <table style="" class="table table-striped" id="tblAddedCourses"><?php if(isset($_SESSION["prevProgCoursesAdded"])) echo $_SESSION["progCourses"]; ?></table>
 
         <table style="overflow-y: scroll;" id="tblForCourseEncoding" class="table table-responsive">
             <tr>
@@ -131,7 +131,7 @@
             <tbody id="coursesTbody"></tbody>
             <tbody id="addingCoursesTbody" class="form-inline">
                 <tr>
-                    <td><input id="txtCourseCode" class="form-control input input-sm" placeholder="course Code" required/></td>
+                    <td><input onblur="searchCourseCode()" id="txtCourseCode" class="form-control input input-sm" placeholder="course Code" required/></td>
                     <td><input id="txtDescription" class="form-control input input-sm" placeholder="Description" required/>
                     </td>
                     <td><input id="txtUnit" class="form-control input input-sm" placeholder="Lecture" required/>

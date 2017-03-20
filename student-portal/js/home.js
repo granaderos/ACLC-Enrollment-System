@@ -16,8 +16,46 @@ $(document).ready(function() {
 });
 
 function toggleHome() {
+    displayPhotofilePhoto();
     displayProfile();
     $("#studMainContainerDiv").html($("#homeContainerDiv").html());
+}
+
+function toggleClassSchedule() {
+     displayClassSchedule();
+    $("#studMainContainerDiv").html($("#studClassScheduleContainerDiv").html());
+}
+
+function displayPhotofilePhoto() {
+    $.ajax({
+        type: "POST",
+        url: "../php/displayProfilePhoto.php",
+        success: function(data) {
+                alert(data);
+            $("#studProfilePhoto").html("<img src='../../information-management/files/profiles/"+data+"' style='width: 180px; height: 200px;' class='image-responsive' />");
+        },
+        error: function(data) {
+            alert("error in displaying profile photo Mj! :( " + JSON.stringify(data));
+        }
+    });
+}
+
+function displayClassSchedule() {
+    $.ajax({
+        type: "POST",
+        url: "../php/displayClassSchedule.php",
+        success: function(data) {
+            $("#studSlassScheduleData").html(data);
+        },
+        error: function(data) {
+            alert("error in displaying schedule Mj! :( " + JSON.stringify(data));
+        }
+    });
+}
+
+function toggleAccountBalance() {
+    displayAccountBalance();
+    $("#studMainContainerDiv").html($("#accountBalanceContainerDiv").html());
 }
 
 function toggleViewGrades() {
@@ -32,6 +70,19 @@ function toggleAccountSetting() {
 
 function togglePreregistration() {
     displayPreregistration();
+}
+
+function displayAccountBalance() {
+    $.ajax({
+        type: "POST",
+        url: "../php/displayAccountBalance.php",
+        success: function(data) {
+            $("#accountBalanceDataContainer").html(data);
+        },
+        error: function(data) {
+            alert("Oh my! Error Mj! :( " + JSON.stringify(data));
+        }
+    });
 }
 
 function displayGrades() {

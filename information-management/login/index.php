@@ -11,7 +11,7 @@ if(isset($_SESSION["type"]))
     else if(strtoupper($_SESSION["type"]) == "DEAN")
         header("Location: ../dean");
     else if(strtoupper($_SESSION["type"]) == "CASHIER")
-        header("Location: ../cashier");
+        header("Location: ../teller");
 ?>
 <html>
 <head>
@@ -24,29 +24,52 @@ if(isset($_SESSION["type"]))
 <body>
 <?php include_once "../misc/header.php";?>
 <div id="main-container">
-    <div id="left-div">
-        <img src="../files/systemPhotos/ACLC.jpg">
-        <table>
-            <tr>
-                <p>
-                <td><label>Username: </label></td>
-                <td><input type="text" class="form-control" placeholder="username" name="userName" id="userName"></td>
-                </p>
-            </tr>
-            <tr>
-                <p>
-                <td><label>Password: </label></td>
-                <td><input type="password" class="form-control" placeholder="password" name="password" id="password"></td>
-                </p>
-            </tr>
-            <tr>
-                <p>
-                <td colspan="2">
-                    <button id="employeeLogin" name="Submit" class="button">Login</button>
-                </td>
-                </p>
-            </tr>
-        </table>
+    <div class="row">
+        <div class="col-lg-5">
+            <div id="left-div">
+                <img src="../files/systemPhotos/ACLC.jpg">
+            </div>
+
+            <!--            <img src="../files/systemPhotos/aclcBack.png" class="image image-responsive"/>-->
+        </div>
+
+        <div style=" margin-top:  120px;" class="col-lg-5">
+
+            <div id="loginForm">
+                <h2 class='alert alert-info text-center' style="font-size: 30px; font-weight:  bolder; font-family: arial">
+                    <!--<span style="color: #ec1423">INFORMATION</span>
+                    <span style="color: #2E3191;">MANAGEMENT</span>-->
+                    <span style="color: #2E3191">INFORMATION MANAGEMENT</span>
+                </h2>
+                <form onsubmit="login(); return false;">
+                    <table style="margin: auto">
+                        <tr class='alert alert-danger'>
+                            <th colspan="2">LOGIN</th>
+                        </tr>
+                        <tr>
+                            <p>
+                            <td><label>Username: </label></td>
+                            <td><input type="text" class="form-control" placeholder="username" name="userName" id="userName"></td>
+                            </p>
+                        </tr>
+                        <tr>
+                            <p>
+                            <td><label>Password: </label></td>
+                            <td><input type="password" class="form-control" placeholder="password" name="password" id="password"></td>
+                            </p>
+                        </tr>
+                        <tr>
+                            <p>
+                            <td colspan="2">
+                                <button id="employeeLogin" name="Submit" class="button">Login</button>
+                            </td>
+                            </p>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+
+        </div>
     </div>
 </div>
 </body>
