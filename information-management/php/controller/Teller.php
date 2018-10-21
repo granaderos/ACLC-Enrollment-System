@@ -424,4 +424,32 @@ class Teller extends DatabaseConnector {
         $this->closeConnection();
     }
 
+    function getFormula() {
+        $this->openConnection();
+
+        $sql = $this->dbHolder->query("SELECT downpayment, installment FROM tuitionFee;");
+        $f = $sql->fetch();
+
+        echo json_encode(array("downpayment"=>$f[0], "installment"=>$f[1]));
+
+        $this->closeConnection();
+    }
+
+    function editFdownpayment($dp) {
+        $this->openConnection();
+
+        $sql = $this->dbHolder->prepare("UPDATE tuitionFee SET downpayment = ?;");
+        $sql->execute(array($dp));
+
+        $this->closeConnection();
+    }
+
+    function editFinstallment($installment) {
+        $this->openConnection();
+
+        $sql = $this->dbHolder->prepare("UPDATE tuitionFee SET installment = ?;");
+        $sql->execute(array($installment));
+
+        $this->closeConnection();
+    }
 }

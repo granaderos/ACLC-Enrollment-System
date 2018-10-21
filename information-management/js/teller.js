@@ -112,7 +112,60 @@ function toggleHome() {
 
 function toggleManageFees() {
     displayTuitionFee();
+    getFormula();
     $("#tellerMainContainerDiv").html($("#manageFeesContainerDiv").html());
+}
+
+function fDownpaymentEdit() {
+    $("#fDownpayment").attr("disabled", false);
+    $("#fDownpayment").focus();
+}
+
+function fInstallmentEdit() {
+    $("#fInstallment").attr("disabled", false);
+    $("#fInstallment").focus();
+}
+
+function editFdownpayment() {
+    var okay = confirm("Are you sure to save this data?");
+    if(okay) {
+        var dp = $("#fDownpayment").val();
+        if(dp.trim().length > 0 && numeric.test(dp) && parseFloat(dp) > 0) {
+
+            $.ajax( {
+                type: "POST",
+                url: "../php/teller/editFdownpayment.php",
+                data: {dp: dp},
+                success: function(data) {
+                    $("#fDownpayment").attr("disabled", true);
+                },
+                error: function(data) {
+                    alert("error in saving downpayment Mj :( " + JSON.stringify(data));
+                }
+            })
+        } else alert("Invalid data;");
+    } else getFormula();
+}
+
+function editFinstallment() {
+    var okay = confirm("Are you sure to save this data?");
+    if(okay) {
+        var installment = $("#fInstallment").val();
+        if(installment.trim().length > 0 && numeric.test(installment) && parseFloat(installment) > 0) {
+
+            $.ajax( {
+                type: "POST",
+                url: "../php/teller/editFinstallment.php",
+                success: function(data) {
+                    $("#fInstallment").attr("disabled", true);
+                },
+                data: {installment: installment},
+                error: function(data) {
+                    alert("error in saving installment Mj :( " + JSON.stringify(data));
+                }
+            })
+        } else alert("Invalid data;");
+    } else getFormula();
 }
 
 function addMisc() {
@@ -198,6 +251,21 @@ function updateTuitionFee() {
             }
         } else alert("Please enter valid a valid amount;")
     }
+}
+
+function getFormula() {
+    $.ajax({
+        type: "POST",
+        url: "../php/teller/getFormula.php",
+        success: function(data) {
+            var obj = JSON.parse(data);
+            $("#fDownpayment").val(obj.downpayment);
+            $("#fInstallment").val(obj.installment);
+        },
+        error: function(data) {
+            alert("Hey Mj, error in getFormula() :( " + JSON.stringify(data));
+        }
+    });
 }
 
 function getPaymentFor() {

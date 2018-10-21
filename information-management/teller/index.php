@@ -49,18 +49,19 @@ if(!isset($_SESSION["type"]) OR $_SESSION["type"] != "cashier")
             <div class="row">
                 <div class="col-lg-7">
                     <ul class="nav nav-tabs">
-                        <li class="active"><a data-toggle="tab" href="#manageMisc">Manage Misc. Fees</a></li>
-                        <li><a data-toggle="tab" href="#displayMisc">Miscellaneous Fees</a></li>
+                        <li class="active"><a data-toggle="tab" href="#displayMisc">Miscellaneous Fees</a></li>
+                        <li><a data-toggle="tab" href="#manageMisc">Add Misc. Fees</a></li>
+                        <li><a data-toggle="tab" href="#formulaSetting">Formula Setting</a></li>
 <!--                        <li><a data-toggle="tab" href="#feesPerProgram">Fees per Program</a></li>-->
                     </ul>
 
                     <div class="tab-content">
-                        <div id="displayMisc" class="tab-pane fade">
+                        <div id="displayMisc" class="tab-pane fade in active">
                             <h3>Miscellaneous Fees</h3>
                             <div id="displayMiscContainer"></div>
                         </div>
 
-                        <div id="manageMisc" class="tab-pane fade in active">
+                        <div id="manageMisc" class="tab-pane fade">
                             <h3>Miscellaneous Fees Management</h3>
                             <div>
                                 <label>Misc. Name: </label>
@@ -75,6 +76,31 @@ if(!isset($_SESSION["type"]) OR $_SESSION["type"] != "cashier")
                                 </select>
                                 <br />
                                 <button class="btn btn-primary btn-block" onclick="addMisc()">Add Miscellaneous</button>
+                            </div>
+                        </div>
+<!-- mysqldump [options] > dump.sql
+    mysqldump test > dump.sql
+    mysqldump test > dump.sql
+ -->
+                        <div id="formulaSetting" class="tab-pane fade">
+                            <h3>Formula Setting</h3>
+                            <div class="form-inline">
+                                <label>Downpayment: </label>
+                                <br />
+                                <form onsubmit="editFdownpayment(); return false;">
+                                    <a title="edit downpayment"><span class="glyphicon glyphicon-edit" onclick="fDownpaymentEdit()"></span></a>&nbsp;
+                                    <input type="text" style="width: 100px !important;" class="form-control" id="fDownpayment" onblur="getFormula()" disabled title="double click to update downpayment" />
+                                    % of the total fee
+                                </form>
+                                <br /><br />
+                                <label>Installment: </label>
+                                <br />
+                                <form onsubmit="editFinstallment(); return false;">
+                                    <a title="edit installment interest"><span class="glyphicon glyphicon-edit" onclick="fInstallmentEdit()"></span></a>&nbsp;
+                                    <input type="text" style="width: 100px !important;" class="form-control" id="fInstallment" onblur="getFormula()" disabled title="double click to update installment interest" />
+                                    % interest of the total fee
+                                </form>
+                                <br /><br />
                             </div>
                         </div>
                     </div>

@@ -18,6 +18,7 @@ if(isset($_SESSION["type"]))
     <title>ACLC IM | Login</title>
     <?php include_once "../misc/imports.html"; ?>
     <link href="../css/login.css" rel="stylesheet" type="text/css"/>
+	<link rel="icon" type="image/png" href="../../aclc.png" />
     <script src="../js/login.js" type="text/javascript"></script>
 
 </head>

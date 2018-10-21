@@ -4,6 +4,7 @@
     <title>ACLC SP | Login</title>
 
     <?php include_once "../misc/imports.html"; ?>
+	<link rel="icon" type="image/png" href="../../aclc.png" />
     <link href="../css/login.css" rel="stylesheet" type="text/css" />
     <script src="../js/login.js" type="text/javascript"></script>
 

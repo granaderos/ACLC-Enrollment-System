@@ -3,6 +3,7 @@
 
 <link rel="stylesheet" type="text/css" href="../css/header.css" />
 <link rel="icon" type="image/png" href="../../aclc.png" />
+<link rel="shortcut icon" type="image/png" href="../../aclc.png" />
 <div class="header">
     <p class="pull-right" style="margin-top: 70px; margin-right: 20px; color: #b9def0;">
     <?php

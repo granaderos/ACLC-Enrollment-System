@@ -104,13 +104,13 @@ class Students extends DatabaseConnector {
     function getStudentSchedule($studentId) {
         $sql1 = $this->dbHolder->prepare("SELECT DISTINCT sc.day FROM schedule sc, sections se, studentSchedule ss, config c, days d
                                             WHERE se.sectionId = sc.sectionId
-                                            AND se.sectionId = ss.sectionId
+                                            AND sc.sectionId = ss.sectionId
                                             AND se.sy = c.sy
                                             AND se.year = c.year
                                             AND se.semester = c.sem
-                                            AND sc.courseCode = ps.courseCode
+                                            AND sc.courseCode = ss.courseCode
                                             AND sc.day = d.day
-                                            AND ss.studentId = ?
+                                            AND ss.studentId = 170009
                                             ORDER BY d.id;");
         $sql1->execute(array($studentId));
 
@@ -119,7 +119,7 @@ class Students extends DatabaseConnector {
             $data .= "<tr class='alert alert-info'><th colspan='3'>".$day[0]."</th></tr>";
             $sql = $this->dbHolder->prepare("SELECT sc.timeStart, sc.timeEnd, sc.room, sc.courseCode FROM schedule sc, sections se, studentSchedule ss, config c, days d
                                             WHERE se.sectionId = sc.sectionId
-                                            AND se.sectionId = ps.sectionId
+                                            AND sc.sectionId = ss.sectionId
                                             AND se.sy = c.sy
                                             AND se.year = c.year
                                             AND se.semester = c.sem
@@ -268,26 +268,33 @@ class Students extends DatabaseConnector {
         $sql7->execute(array($studInfo[18]));
 
         $miscTotal = 0;
-        $fees = "<label>Tuition Fee: </label>&nbsp;".$feePerUnit." x ".$totalUnits." = ".$tuitionFee."<br />
+        $fees = "<label>Tuition Fee: </label>&nbsp;".number_format($tuitionFee, 2)."<br />
+                (".number_format($feePerUnit, 2)."/unit x ".$totalUnits." total units)<br />
                 <span style='text-decoration: underline;'>MISCELLANEOUS</span><br />";
         while($misc = $sql7->fetch()) {
             $miscTotal += $misc[2];
-            $fees .= "<label>".$misc[1].":&nbsp;</label>".$misc[2]."<br />";
+            $fees .= "<label>".$misc[1].":&nbsp;</label>".number_format($misc[2], 2)."<br />";
         }
 
+        $sql10 = $this->dbHolder->query("SELECT downpayment, installment FROM tuitionFee;");
+        $f = $sql10->fetch();
+
+
         $totalFee = $tuitionFee+$miscTotal;
-        $downPayment = $totalFee*.3;
-        $pLessD = $totalFee-$downPayment;
+        $downPayment = $totalFee*$f[0];
+        $pLessD = ($totalFee+($totalFee*$f[1]))-$downPayment;
         $pBreak = $pLessD/4;
 
+
         $feeBreakdown =
-            "<label>Total Fee: &nbsp;</label>".$totalFee."<br />
+            "<label>Total Fee: &nbsp;</label>".number_format($totalFee, 2)."<br />
                 <span style='text-decoration: underline;'>PAYMENT BREAKDOWN</span><br />
-                <label>Downpayment: &nbsp;</label>".$downPayment."<br />
-                <label>Prelim: &nbsp;</label>".$pBreak."<br />
-                <label>Midterm: &nbsp;</label>".$pBreak."<br />
-                <label>Prefinal:&nbsp; </label>".$pBreak."<br />
-                <label>Final:&nbsp; </label>".$pBreak."<br />
+                <label>Downpayment: &nbsp;</label>".number_format($downPayment, 2)."<br />
+                <span style='text-decoration: underline;'>INSTALLMENT (+".$f[1]." on Total Fee)</span><br />
+                <label>Prelim: &nbsp;</label>".number_format($pBreak, 2)."<br />
+                <label>Midterm: &nbsp;</label>".number_format($pBreak, 2)."<br />
+                <label>Prefinal:&nbsp; </label>".number_format($pBreak, 2)."<br />
+                <label>Final:&nbsp; </label>".number_format($pBreak, 2)."<br />
             </ul>";
 
         $spCredential =
@@ -339,7 +346,7 @@ class Students extends DatabaseConnector {
                         ".$spCredential."
                     </div>
                 </div>
-                <table class='table'><tr><th>Date Enrolled: ".$studInfo[20]."</th></tr></table>
+                <table class='table'><tr class='alert alert-danger'><th>Date Enrolled: ".$studInfo[20]."</th></tr></table>
             </div>";
 
         $_SESSION["regForm"] = $regForm;
